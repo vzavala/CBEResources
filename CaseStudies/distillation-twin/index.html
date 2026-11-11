@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2034%2040%22%3E%3Crect%20x%3D%2210%22%20y%3D%222%22%20width%3D%2214%22%20height%3D%2236%22%20rx%3D%227%22%20fill%3D%22%23fff%22%20stroke%3D%22%23c5050c%22%20stroke-width%3D%222.2%22/%3E%3Cpath%20d%3D%22M12%2011h10M12%2017h10M12%2023h10M12%2029h10%22%20stroke%3D%22%231d1d1f%22%20stroke-width%3D%221.4%22/%3E%3Cpath%20d%3D%22M2%2020h8M24%206h7v8M24%2034h7%22%20stroke%3D%22%235f6368%22%20stroke-width%3D%221.6%22%20fill%3D%22none%22/%3E%3C/svg%3E" />
   <title>CBE Distillation Lab</title>
-  <script type="module" crossorigin src="./assets/index-DrtHWJ2W.js"></script>
+  <script type="module" crossorigin src="./assets/index-CFP6ftDz.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/config-q-iIzTxz.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-AzzXv9BU.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-BEUH9iGi.css">
 </head>
 <body>
   <div id="viewport"></div>
@@ -32,6 +32,7 @@
       <button id="btnSS" title="Jump 6 h ahead">⏩ +6 h</button>
       <button id="btnReset" title="Restart">↺ Reset</button>
       <button id="btnEq" title="Model equations, live values (E)">∑ Math</button>
+      <button id="btnGuide" title="How to use the twin">Quick start</button>
       <button id="btnCrs" title="How the twin connects to CBE courses">Links to Courses</button>
       <button id="btnVal" class="cal-only" hidden title="Model vs. lab data: side-by-side errors and their sources">Model vs. Data</button>
     </div>
@@ -160,6 +161,23 @@
     <div class="tb-grid">
       <div class="tb-cell"><canvas data-key="abv"></canvas></div><div class="tb-cell"><canvas data-key="temp"></canvas></div><div class="tb-cell"><canvas data-key="loops"></canvas></div>
       <div class="tb-cell"><canvas data-key="mv"></canvas></div><div class="tb-cell"><canvas data-key="flow"></canvas></div><div class="tb-cell"><canvas data-key="comp"></canvas></div>
+    </div>
+  </div>
+
+  <div id="guidePanel" hidden role="dialog" aria-label="Quick start">
+    <div class="eqtop"><h3>Quick start <small>— a distillation column you can run, break and inspect</small></h3><button id="guideClose">✕</button></div>
+    <div id="guideBody">
+      <ol class="gd-steps">
+        <li><b>Start the plant.</b> Press the red ▶ button at top left. The clock shows plant time; change the speed-up to run faster. <b>⏩ +6 h</b> jumps straight to steady state.</li>
+        <li><b>Operate it.</b> In <b>Operate</b>, move the reboiler duty, reflux ratio, feed flow or feed strength. Each change is marked on the trends.</li>
+        <li><b>Control it.</b> In <b>Control</b>, switch the temperature and level loops between <b>Auto</b> (the controller holds the setpoint) and <b>Manual</b> (you set the output), tune the gains and change setpoints. <b>Loop trends</b> plots each loop.</li>
+        <li><b>Watch the response.</b> The chart at right shows product strength. <b>Dynamic Trends</b> opens all six charts; <b>Stage Profiles</b> and <b>McCabe–Thiele</b> show the column tray by tray.</li>
+        <li><b>Look inside.</b> Click any label in the 3D view (a tray, the condenser, the reboiler) for a close-up and its numbers. Double-click to fly there.</li>
+        <li><b>Cause trouble.</b> In <b>Faults</b>, trip the heater, cut the cooling water, add foaming or damage a tray, then watch the alarms.</li>
+        <li><b>Check the model.</b> <b>Model vs. Data</b> compares the twin with runs measured on our lab column. <b>Math</b> shows every equation with live values.</li>
+      </ol>
+      <div class="gd-try"><span>Try this</span>Run to steady state, then raise the reflux ratio from 3.8 to 6. What happens to the distillate strength, and to how much distillate you make? Why?</div>
+      <div class="gd-foot"><button id="guideGo" class="wide">Start exploring</button></div>
     </div>
   </div>
 
