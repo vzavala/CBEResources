@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2034%2040%22%3E%3Crect%20x%3D%2210%22%20y%3D%222%22%20width%3D%2214%22%20height%3D%2236%22%20rx%3D%227%22%20fill%3D%22%23fff%22%20stroke%3D%22%23c5050c%22%20stroke-width%3D%222.2%22/%3E%3Cpath%20d%3D%22M12%2011h10M12%2017h10M12%2023h10M12%2029h10%22%20stroke%3D%22%231d1d1f%22%20stroke-width%3D%221.4%22/%3E%3Cpath%20d%3D%22M2%2020h8M24%206h7v8M24%2034h7%22%20stroke%3D%22%235f6368%22%20stroke-width%3D%221.6%22%20fill%3D%22none%22/%3E%3C/svg%3E" />
   <title>CBE Distillation Lab</title>
-  <script type="module" crossorigin src="./assets/index-CciqvLfT.js"></script>
+  <script type="module" crossorigin src="./assets/index-DD6Zy-eE.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/config-q-iIzTxz.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-Diw1gwed.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-BmtkafS_.css">
 </head>
 <body>
   <div id="viewport"></div>
@@ -32,7 +32,7 @@
       <button id="btnSS" title="Jump 6 h ahead">⏩ +6 h</button>
       <button id="btnReset" title="Restart">↺ Reset</button>
       <button id="btnEq" title="Model equations, live values (E)">∑ Math</button>
-      <button id="btnCrs" title="How the twin connects to CBE courses">🎓 Courses</button>
+      <button id="btnCrs" title="How the twin connects to CBE courses">🎓 Links to Courses</button>
       <button id="btnVal" class="cal-only" hidden title="Model vs. lab data: side-by-side errors and their sources">📋 Model vs. Data</button>
     </div>
     <div id="alarms"></div>
@@ -112,12 +112,6 @@
   <main id="stage"></main>
 
   <div id="stagebar">
-    <div class="sb-legend">
-      <span class="sb-lbl">Ethanol (x, y)</span>
-      <span class="sb-scale"><span>0</span><span class="fl-bar"></span><span>≥0.85</span></span>
-      <span class="sb-key"><i class="dot up"></i>vapour (y) rising</span>
-      <span class="sb-key"><i class="dot down"></i>liquid (x) falling</span>
-    </div>
     <div class="sb-views">
       <button id="howtoOpen" class="sb-help" title="Rotate, zoom, click">? Explore in 3D</button>
       <span class="sb-lbl">View</span>
@@ -133,13 +127,13 @@
     <div id="inspector" class="card"></div>
     <div id="charts" class="card">
       <nav class="ptabs" data-group="charts">
-        <button data-tab="trends" class="on">Trends</button><button data-tab="profiles">Profiles</button><button data-tab="mt">McCabe–Thiele</button><button data-tab="lab" class="cal-only" hidden>Model vs. Data</button><button data-tab="events">Events</button>
+        <button data-tab="trends" class="on">Trends</button><button data-tab="profiles">Stage Profiles</button><button data-tab="mt">McCabe–Thiele</button><button data-tab="lab" class="cal-only" hidden>Model vs. Data</button><button data-tab="events">Events</button>
       </nav>
       <div class="tabpage cpage" data-group="charts" data-page="trends">
         <div class="trendopts">
           <select id="trendKey"><option value="abv">Strength (% ABV)</option><option value="comp">Mole fractions</option><option value="temp">Temperatures</option><option value="flow">Flows &amp; duties</option><option value="loops">Control loops (PV / SP)</option><option value="mv">Controller outputs</option></select>
           <select id="trendWin"><option value="600" selected>10 min window</option><option value="1800">30 min window</option><option value="3600">1 h window</option><option value="7200">2 h window</option><option value="28800">8 h window</option><option value="0">whole run</option></select>
-          <button id="btnExpand" title="Open all trends in a large view">⤢ Expand</button>
+          <button id="btnExpand" title="Open all dynamic trends in a large view">⤢ Dynamic Trends</button>
         </div>
         <canvas id="chTrend"></canvas>
       </div>
@@ -160,7 +154,7 @@
   </aside>
 
   <div id="trendsBig" hidden>
-    <div class="eqtop"><h3>📈 Trends</h3>
+    <div class="eqtop"><h3>📈 Dynamic Trends</h3>
       <div class="tb-opts"><select id="bigWin"><option value="600" selected>10 min window</option><option value="1800">30 min window</option><option value="3600">1 h window</option><option value="7200">2 h window</option><option value="28800">8 h window</option><option value="0">whole run</option></select>
       <button id="bigClose">✕</button></div></div>
     <div class="tb-grid">
@@ -170,7 +164,7 @@
   </div>
 
   <div id="crsPanel" hidden>
-    <div class="eqtop"><h3>🎓 Courses <small>— where each CBE course meets the twin</small></h3>
+    <div class="eqtop"><h3>🎓 Links to Courses <small>— where each CBE course meets the twin</small></h3>
       <div class="crs-ctl"><span class="seg" id="crsAud"><button data-a="student" class="on">Students</button><button data-a="instructor">Instructors</button></span>
       <span class="seg" id="crsKind"><button data-k="all" class="on">All</button><button data-k="core">Core</button><button data-k="elective">Electives</button></span>
       <button id="crsClose">✕</button></div></div>
