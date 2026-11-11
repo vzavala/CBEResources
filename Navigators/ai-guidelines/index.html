@@ -177,6 +177,26 @@
   .scope-box > b { font: 800 16px var(--display); color: var(--best); }
   .scope-box span { font-size: 14px; }
 </style>
+<style>
+  header { padding: 10px 0 8px; }
+  h1 { margin: 2px 0 4px; }
+  .scope-box { margin: 8px 0 2px; padding: 8px 14px; gap: 2px; }
+  .legend { margin-top: 6px; }
+  .scope { margin-top: 6px; padding: 6px 10px; }
+  .glance { margin: 4px 0 2px; gap: 8px; }
+  .g { padding: 7px 12px; }
+  .g h3 { margin-bottom: 4px; }
+  .g ul { gap: 1px; font-size: 13.5px; line-height: 1.45; }
+  .tiles { gap: 10px; }
+  .tile { padding: 11px 14px; gap: 3px; }
+  .tile .td { font-size: 13.5px; line-height: 1.4; }
+  .scope-box span, .scope { font-size: 13px; line-height: 1.45; }
+  .g ul { font-size: 13px; }
+  .hub-h { margin: 6px 0 5px; font-size: 17px; }
+  .tile { padding: 9px 13px; }
+  .tile .tt { font-size: 16px; }
+  footer { padding: 4px 0 6px; margin-top: 6px; }
+</style>
 </head>
 <body>
 <header>
@@ -354,18 +374,6 @@
       </tbody></table></div>
   </section>
 
-  <section class="page" data-page="students-quiz" data-desc="12 quick questions to test what you know, with instant feedback" hidden>
-    <h2>Check your understanding</h2>
-    <p class="note">Pick an answer to see whether it's right and why. Nothing is recorded, so take it as often as you like.</p>
-    <div class="score" id="score"><span id="score-text">0 of 12 answered · 0 correct</span><button type="button" id="quiz-reset">Start over</button></div>
-    <div class="quiz" id="quiz"></div>
-    <div class="results" id="results" aria-live="polite">
-      <div class="r-head"><b>Your results</b><span>CBE Generative AI Guide · Check your understanding</span></div>
-      <div class="r-name"><label for="quiz-name">Your name (optional)</label><input id="quiz-name" type="text" autocomplete="off" placeholder="Type your name"></div>
-      <div id="results-body"></div>
-      <p class="r-note">Nothing is recorded or sent anywhere, and your name stays on this page. To keep or submit your result, take a screenshot of this card.</p>
-    </div>
-  </section>
   <section class="page" data-page="students-glossary" data-desc="Plain-language definitions: AI, machine learning, large language models and more" hidden>
     <h2>Glossary</h2>
     <p class="note">Plain-language definitions of the terms used in these guidelines.</p>
@@ -419,6 +427,18 @@
           <div><b><a href="https://engineering.wisc.edu/departments/chemical-biological-engineering/">CBE Department</a></b><span>Department questions · che@che.wisc.edu</span></div>
         </div>
       </div>
+  </section>
+  <section class="page" data-page="students-quiz" data-desc="12 quick questions to test what you know, with instant feedback" hidden>
+    <h2>Quiz: Check your understanding</h2>
+    <p class="note">Pick an answer to see whether it's right and why. Nothing is recorded, so take it as often as you like.</p>
+    <div class="score" id="score"><span id="score-text">0 of 12 answered · 0 correct</span><button type="button" id="quiz-reset">Start over</button></div>
+    <div class="quiz" id="quiz"></div>
+    <div class="results" id="results" aria-live="polite">
+      <div class="r-head"><b>Your results</b><span>CBE Generative AI Guide · Check your understanding</span></div>
+      <div class="r-name"><label for="quiz-name">Your name (optional)</label><input id="quiz-name" type="text" autocomplete="off" placeholder="Type your name"></div>
+      <div id="results-body"></div>
+      <p class="r-note">Nothing is recorded or sent anywhere, and your name stays on this page. To keep or submit your result, take a screenshot of this card.</p>
+    </div>
   </section>
 </div>
 
