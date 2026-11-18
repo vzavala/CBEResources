@@ -176,7 +176,7 @@ function partHtml(q) {
   }
   return h + `</div></li>`;
 }
-// instructor edition: reference design, feasible range and rubric of a design problem, whatever shape the twin stored them in
+// design notes: reference design, feasible range and rubric of a design problem, whatever shape the twin stored them in
 function fmtNote(v) {
   if (v == null) return "";
   if (Array.isArray(v)) return v.map(fmtNote).join("<br>");
