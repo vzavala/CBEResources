@@ -271,13 +271,13 @@ function card(t) {
   const first = active && t.courses.includes(active) ? [active, ...t.courses.filter(n => n !== active)] : t.courses;
   const rest = first.slice(SHOW);
   el.innerHTML = `
-    <a class="pic" href="${t.url}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+    <a class="pic" href="${t.url}" tabindex="-1" aria-hidden="true">
       <img src="img/${t.id}.jpg" alt="" loading="lazy" width="640" height="384">
       <span class="themes">${ths.map(th => `<span class="theme" style="--th:${th.color}"><i></i>${th.label}</span>`).join("")}</span></a>
     <div class="txt">
       <h2>${t.name}</h2>
       <p class="desc">${t.desc}</p>
-      <a class="open" href="${t.url}" target="_blank" rel="noopener">Explore ↗</a>
+      <a class="open" href="${t.url}">Explore</a>
     </div>`;
   return el;
 }

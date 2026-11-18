@@ -224,7 +224,7 @@ function show(n, focusApp, push) {
     return `<section class="twin" id="${a}-${courseKey(c.n)}">
       <div class="twin-head"><img src="img/${a}.jpg" alt="" width="120" height="72" loading="lazy">
         <div><h3>${t.name}</h3><div class="meta">${ps.length} problem${ps.length > 1 ? "s" : ""} · ${t.theme}</div></div>
-        <a class="btn" href="${t.url}" target="_blank" rel="noopener">Open twin ↗</a></div>
+        <a class="btn" href="${t.url}">Open twin ↗</a></div>
       ${ps.map(p => probHtml(p, `${courseKey(c.n)}.${++k}`)).join("")}
     </section>`;
   }).join("");
