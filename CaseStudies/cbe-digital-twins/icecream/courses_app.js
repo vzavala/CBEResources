@@ -1,0 +1,62 @@
+// Ice Cream Plant Digital Twin ↔ CBE curriculum. Course numbers, titles, terms and topic names come from courses_data.js
+// (generated from TwinKit/courses.json). Here: which features of this application each course uses,
+// 2–4 of its topics, a student activity and an instructor note.
+export const APP_ID = "icecream";
+export const PROBLEM_URL = "../problems/";
+
+// Features (rows of the course map); `go` names the jump action in index.html
+export const FEATURES = [
+  { id: "recipe", name: "Recipe & mass balances (Product design)", go: "design" },
+  { id: "freeze", name: "Freezing curve & ice fraction", go: "freeze" },
+  { id: "htst", name: "HTST pasteuriser: kill & heat recovery", go: "htst" },
+  { id: "homog", name: "Homogeniser & emulsion", go: "homog" },
+  { id: "freezer", name: "Scraped-surface freezer", go: "freezer" },
+  { id: "hardening", name: "Hardening a pint or tub", go: "hardening" },
+  { id: "refrig", name: "Ammonia refrigeration & condenser", go: "refrig" },
+  { id: "control", name: "Draw-temperature control loop", go: "control" },
+  { id: "micro", name: "Microstructure: foam, emulsion, ice", go: "micro" },
+  { id: "quality", name: "Quality, storage & recrystallisation", go: "quality" },
+  { id: "cost", name: "Cost, energy & the legal standard", go: "cost" },
+];
+
+export const COURSE_USE = {
+  "CBE 250": { features: ["recipe", "freezer", "htst", "cost"], topics: ["material-balances", "energy-balances", "heat-integration"],
+    student: "Open Product design. Change the milk fat to 14 % and solve the fat, milk-solids and total-mass balances yourself for cream, skim milk and powder. Do your numbers match the table?",
+    instructor: "A real recipe is a 3 × 3 linear system of component balances. The freezer energy balance and HTST regeneration add energy balances and heat integration." },
+  "CBE 255": { features: ["freeze", "hardening", "control"], topics: ["nonlinear-equations", "odes", "process-modeling"],
+    student: "The freezing curve solves one nonlinear equation (water activity of the syrup = activity of ice) at every temperature. Move sugar from 15 to 20 % and read how far the freezing point moves.",
+    instructor: "Bisection for the ice fraction, an explicit 3-D enthalpy-method PDE for hardening, and a first-order ODE under PI control all run in the page." },
+  "CBE 310": { features: ["refrig", "homog", "freezer"], topics: ["refrigeration", "first-law", "flow-processes"],
+    student: "In the ammonia panel, compare the freezer duty's COP with its Carnot limit. What fraction of ideal does the real two-stage cycle reach, and where are the losses?",
+    instructor: "Two-stage ammonia cycle at real suction temperatures; first law on the homogeniser valve (ΔT = ΔP/ρc<sub>p</sub>) and on the freezer barrel." },
+  "CBE 311": { features: ["freeze", "refrig", "micro"], topics: ["lle-sle", "activity-models", "pure-phase-equilibrium"],
+    student: "Raise the sugar from 15 to 20 % and watch the freezing curve. How much of the water is still liquid at −18 °C, and why does that make ice cream scoopable?",
+    instructor: "Freezing-point depression from Norrish activity coefficients equated to the activity of ice: solid–liquid equilibrium students can taste." },
+  "CBE 320": { features: ["freezer", "hardening", "htst"], topics: ["conduction", "convection", "viscosity"],
+    student: "Switch the package from a pint to a 3-gallon tub. Hardening takes about 6× longer. Check that with t ∝ L²/α.",
+    instructor: "Penetration theory at the scraped wall, transient 3-D conduction with phase change, and laminar flow (fastest particle) in the holding tube." },
+  "CBE 326": { features: ["htst", "hardening", "refrig"], topics: ["heat-exchangers", "heat-integration", "convection"],
+    student: "In the HTST panel, how much heating does regeneration save? Size the regeneration section with A = Q/(UΔT) and compare with the plate count.",
+    instructor: "Plate heat exchanger sizing with regeneration, a fan-driven freezer room (U and Biot number), and fouling with clean-in-place." },
+  "CBE 426": { features: ["refrig"], topics: ["humidification-drying"],
+    student: "How much water does the evaporative condenser evaporate per hour? Compare it with the heat it rejects.",
+    instructor: "The evaporative condenser as a humidification operation (simple heat balance in this model)." },
+  "CBE 430": { features: ["htst", "quality"], topics: ["rate-laws", "non-ideal-flow"],
+    student: "Lower the pasteurisation temperature to 75 °C. How many log reductions are left, and is the mix still legal?",
+    instructor: "First-order thermal death (D, z, F-value), the laminar residence-time distribution in the holding tube, Avrami fat crystallisation and WLF ripening." },
+  "CBE 450": { features: ["cost", "recipe", "refrig", "quality"], topics: ["economics", "sustainability", "optimization"],
+    student: "Find a recipe and overrun that cut the cost per gallon by 10 % while still meeting the legal standard and keeping ice crystals under 50 µm.",
+    instructor: "Cost per gallon, refrigeration energy and the standard of identity as constraints: a compact product-and-process design problem." },
+  "CBE 470": { features: ["control", "freezer"], topics: ["feedback-control", "first-order-systems", "process-safety"],
+    student: "Watch the draw-temperature trend while the mix flow wanders. How far does the controller move the ammonia temperature to hold the setpoint?",
+    instructor: "A PI loop on draw temperature manipulating the ammonia suction temperature, ratio control for overrun, and the pasteuriser's divert interlock." },
+  "CBE 540": { features: ["quality", "freeze", "recipe"], topics: ["polymer-physics", "polymer-structure"],
+    student: "Store at −18 °C instead of −29 °C. How much do the ice crystals grow in 4 weeks? Relate it to the glass transition of the syrup.",
+    instructor: "Glass transition Tg′ and WLF kinetics of the freeze-concentrated syrup; shear-thinning polysaccharide stabilisers." },
+  "CBE 547": { features: ["homog", "micro", "quality"], topics: ["self-assembly", "interface-thermo"],
+    student: "Drop the homogeniser pressure to 5 MPa. How do droplet size and destabilised fat change? Check the microstructure view.",
+    instructor: "An emulsion (homogenisation, interfacial area, protein coverage) and a foam (Taylor break-up, partial coalescence) in one product." },
+  "CBE 560": { features: ["htst"], topics: ["cell-growth", "scale-up"],
+    student: "The model uses D<sub>72</sub> = 1.5 s and z = 6.5 °C for Listeria. How long at 72 °C gives a 5-log kill?",
+    instructor: "Microbial thermal death kinetics as the safety basis of a food bioprocess." },
+};

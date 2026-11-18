@@ -1,0 +1,303 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChemE Digital Twins</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Wisconsin scheme: white header with Badger-red type, white cards with a thin red top rule. */
+:root {
+  --bg: #ffffff; --plate: #ffffff; --panel-2: #f7f8fa;
+  --ink: #1d2733; --ink-2: #5d6875; --rule: #e1e5ea; --ctl-border: #cfd6de;
+  --accent: #c5050c; --accent-deep: #9b0000; --accent-ink: #ffffff; --tint: rgba(197, 5, 12, .08);
+  --chip: #f4f6f8; --signal: #1f6fd1; --ok: #1f8a4c; --ok-tint: rgba(31, 138, 76, .08);
+  --band: #ffffff; --band-2: #c5050c; --band-ink: #c5050c;
+  color-scheme: light;
+  --font-display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap {
+  margin: 0; display: grid; gap: 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.hero { background: var(--band); border-bottom: 2px solid var(--band-2); }
+.hero .wrap { padding-block: 16px 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 14px 28px; align-items: center; }
+.intro { display: grid; gap: 6px; }
+.eyebrow { font: 700 12.5px var(--font-display); letter-spacing: .14em; text-transform: uppercase; margin: 0; color: var(--band-ink); }
+h1 { font: 700 clamp(32px, 4vw, 46px)/1.02 var(--font-display); margin: 0; color: var(--band-ink); text-wrap: balance; }
+.lede { margin: 0; font-size: 15px; color: var(--ink); }
+.lede strong { color: var(--band-ink); }
+.purpose { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.purpose li { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 8px; padding: 9px 11px; background: var(--panel-2); display: grid; gap: 3px; align-content: start; }
+.purpose b { font: 700 15px/1.15 var(--font-display); letter-spacing: .03em; text-transform: uppercase; color: var(--ink); }
+.purpose p { margin: 0; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
+.purpose .uses { font-size: 12.5px; color: var(--ink-2); }
+.purpose .uses span { font-weight: 600; color: var(--accent); }
+@media (max-width: 1000px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) { .purpose { grid-template-columns: minmax(0, 1fr); } }
+.body.wrap { padding-block: 12px 18px; gap: 12px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.filters .label { font: 700 12px var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { font: 600 13px var(--font-display); letter-spacing: .03em; border: 1px solid var(--ctl-border); background: var(--plate);
+  color: var(--ink); padding: 4px 12px; border-radius: 99px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.chips button i { width: 9px; height: 9px; border-radius: 50%; background: var(--th); }
+.chips button:hover { border-color: var(--accent); }
+.chips button[aria-pressed="true"] { background: var(--tint); color: var(--accent-deep); border-color: var(--accent); }
+select { font: 600 13px var(--font-display); color: var(--ink); background: var(--plate); border: 1px solid var(--rule); border-radius: 99px; padding: 4px 10px; margin-left: auto; }
+button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 12px; }
+@media (min-width: 1250px) { .grid { grid-template-columns: repeat(7, minmax(0, 1fr)); } }   /* 13 twins: 7 + 6 */
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; display: grid;
+  grid-template-rows: auto 1fr; min-width: 0; transition: box-shadow .15s, transform .15s; }
+.plate:hover { box-shadow: 0 8px 22px rgba(40,39,40,.14); transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) { .plate { transition: none; } .plate:hover { transform: none; } }
+.pic { position: relative; display: block; aspect-ratio: 16 / 7.4; background: var(--chip); }
+.pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.themes { position: absolute; left: 6px; top: 6px; right: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+.theme { font: 700 11px var(--font-display); letter-spacing: .08em; text-transform: uppercase;
+  background: rgba(255,255,255,.93); color: #282728; padding: 2px 8px 2px 7px; border-radius: 99px; display: inline-flex; align-items: center; gap: 5px; }
+.theme i { width: 8px; height: 8px; border-radius: 50%; background: var(--th); }
+.txt { padding: 8px 12px 10px; display: grid; grid-template-rows: auto 1fr auto; gap: 5px; }
+h2 { font: 700 18.5px/1.1 var(--font-display); margin: 0; text-wrap: balance; }
+.desc { margin: 0; font-size: 13.8px; line-height: 1.38; }
+.courses { display: flex; flex-wrap: wrap; gap: 4px; }
+.course { font: 600 11.5px/1.3 var(--font-display); letter-spacing: .02em; padding: 1px 7px; border-radius: 99px;
+  border: 1px solid var(--rule); color: var(--ink); text-decoration: none; background: var(--chip); white-space: nowrap; }
+a.course:hover { border-color: var(--accent); color: var(--accent); }
+.more { color: var(--ink-2); background: none; border-style: dashed; }
+.open { justify-self: start; font: 700 12px var(--font-display); letter-spacing: .06em; text-transform: uppercase;
+  background: var(--accent); color: var(--accent-ink); text-decoration: none; padding: 5px 12px; border-radius: 6px; }
+.open:hover { background: var(--accent-deep); color: #fff; }
+.empty { color: var(--ink-2); }
+.copy { margin: 4px 0 0; text-align: center; font-size: 12px; color: var(--ink-2); }
+/* wide screens: the whole page fits the window, no scrolling; pictures take whatever height is left */
+.pic img { position: absolute; inset: 0; }
+@media (min-width: 1250px) {
+  html { height: 100%; }
+  body { min-height: 100%; height: 100dvh; display: grid; grid-template-rows: auto 1fr; }
+  .hero .wrap { padding-block: 10px; }
+  h1 { font-size: clamp(30px, 3.2vw, 40px); }
+  .purpose li { padding: 7px 10px; }
+  .body.wrap { padding-block: 8px 6px; gap: 8px; grid-template-rows: auto 1fr auto; }
+  /* every card spans a picture track and a text track of the page grid, so all pictures get the same height */
+  .grid { grid-template-rows: repeat(2, auto auto); align-content: start; gap: 12px; }
+  .plate { grid-row: span 2; grid-template-rows: subgrid; row-gap: 0; }
+  /* modest cards: the page is capped in width and pictures in height, so thumbnails are shown at or below
+     their native resolution (640 px wide) and stay sharp on high-density screens */
+  .wrap { max-width: 1500px; width: 100%; margin-inline: auto; box-sizing: border-box; }
+  .pic { aspect-ratio: auto; height: clamp(72px, 13vh, 118px); }
+  .desc { font-size: 13.2px; line-height: 1.32; }
+  .copy { margin: 0; font-size: 11px; }
+}
+@media (min-width: 1250px) and (max-height: 770px) {   /* short laptop windows: drop the "Use it for" lines and tighten */
+  .hero .wrap { padding-block: 6px; gap: 8px 20px; }
+  h1 { font-size: 30px; }
+  .lede { font-size: 13.5px; line-height: 1.4; }
+  .purpose .uses { display: none; }
+  .purpose p { font-size: 12.8px; }
+  .body.wrap { padding-block: 6px 4px; gap: 6px; }
+  .grid { gap: 8px; }
+  .pic { height: clamp(56px, 11vh, 84px); }
+  .txt { padding: 6px 10px 7px; gap: 3px; }
+  h2 { font-size: 16.5px; }
+  .desc { font-size: 12.4px; line-height: 1.28; }
+  .open { padding: 3px 10px; font-size: 11px; }
+}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="intro">
+      <p class="eyebrow">UW–Madison Chemical &amp; Biological Engineering</p>
+      <h1>ChemE Digital Twins</h1>
+      <p class="lede"><strong>The impact of chemical engineers is everywhere:</strong> your food, water, energy, batteries, shoes and medicine. Each digital twin is a live 3D model that runs real engineering math.</p>
+    </div>
+    <ul class="purpose" aria-label="What the digital twins are for">
+      <li><b>See the impact</b><p>Discover how chemical engineers shape food, water, energy, health and the planet.</p><p class="uses"><span>Use it for:</span> open houses, high-school visits, outreach</p></li>
+      <li><b>Connect your courses</b><p>Integrative case studies: each twin brings balances, thermo, transport, kinetics, control and design together in one real system, with its equations and references.</p><p class="uses"><span>Use it for:</span> lecture demos, lab prep, <a href="problems/" target="_blank" rel="noopener">course problem sets ↗</a></p></li>
+      <li><b>Explore what-ifs</b><p>Change conditions and watch the process respond, as industry does with its own digital twins.</p><p class="uses"><span>Use it for:</span> design studies, operator training, research</p></li>
+    </ul>
+  </div>
+</header>
+
+<div class="wrap body">
+  <div class="filters">
+    <span class="label" id="flt-label">Explore by theme</span>
+    <div class="chips" id="themes" role="group" aria-labelledby="flt-label"></div>
+    <select id="subject" aria-label="Filter by subject"></select>
+  </div>
+  <main class="grid" id="grid" aria-live="polite"></main>
+  <p class="copy">© Department of Chemical and Biological Engineering, UW–Madison, 2026</p>
+</div>
+
+<script>
+const COURSES = {
+  150: "Introduction to Chemical Engineering",
+  250: "Process Synthesis", 255: "Introduction to Chemical Process Modeling", 310: "Chemical Process Thermodynamics",
+  311: "Thermodynamics of Mixtures", 320: "Introductory Transport Phenomena", 324: "Transport Phenomena Lab",
+  326: "Momentum and Heat Transfer Operations", 355: "Statistics for Chemical Engineers",
+  424: "Operations and Process Laboratory", 426: "Mass Transfer Operations", 430: "Chemical Kinetics and Reactor Design",
+  440: "Chemical Engineering Materials", 450: "Process Design", 470: "Process Dynamics and Control",
+  512: "Energy Technologies and Sustainability", 540: "Polymer Science and Technology",
+  547: "Introduction to Colloid and Interface Science", 560: "Biochemical Engineering",
+};
+const courseUrl = n => `https://guide.wisc.edu/search/?P=CBE%20${n}`;
+// short subject labels shown on the page; full number and title appear on hover
+const LABEL = {
+  150: "Intro ChemE",
+  250: "Balances", 255: "Modeling", 310: "Thermo", 311: "Mixtures", 320: "Transport", 324: "Transport Lab",
+  326: "Fluids & Heat", 355: "Statistics", 424: "Unit Ops Lab", 426: "Mass Transfer", 430: "Kinetics & Reactors",
+  440: "Materials", 450: "Design", 470: "Control", 512: "Energy", 540: "Polymers", 547: "Colloids", 560: "Biochem",
+};
+
+const THEMES = {
+  energy:   { label: "Energy",             color: "#e8a33d" },
+  food:     { label: "Food", color: "#59a14f" },
+  env:      { label: "Environment",        color: "#4e9ad6" },
+  products: { label: "Consumer Products",  color: "#c5050c" },
+  health:   { label: "Health",             color: "#8e6bbf" },
+  mfg:      { label: "Manufacturing",      color: "#6b7785" },
+};
+const ORDER = ["energy", "food", "env", "products", "health", "mfg"];
+const TWINS = [
+  {
+    id: "distill", theme: "mfg", also: ["energy"], first: true, name: "Summer Lab Distillation",
+    url: "distill/",
+    desc: "A live 14-tray ethanol–water column, fitted to student lab runs: reflux, steam, control and trends.",
+    courses: [424, 250, 255, 310, 311, 320, 326, 355, 426, 450, 470],
+  },
+  {
+    id: "pastillation", theme: "mfg",     name: "Pastillation Line",
+    url: "pastillation/",
+    desc: "How molten plastics and food become dust-free beads. Run the cooling line and cause a clog.",
+    basis: 'González, Pulsipher, Jiang, Soderstrom &amp; Zavala, <a href="https://arxiv.org/abs/2503.16539" target="_blank" rel="noopener">digital-twin simulator</a>; the paper\'s code runs live in the page.',
+    courses: [320, 326, 255, 470, 355, 310, 450],
+  },
+  {
+    id: "gas", theme: "energy",     name: "Natural Gas Pipelines",
+    url: "gas/",
+    desc: "How natural gas crosses the country to heat homes. Change demand and watch the pipeline respond.",
+    basis: 'Zavala, natural gas network model, <a href="https://www.sciencedirect.com/science/article/pii/S0098135414000349" target="_blank" rel="noopener">Computers &amp; Chemical Engineering (2014)</a>.',
+    courses: [250, 255, 310, 311, 320, 326, 355, 426, 430, 440, 450, 470, 512],
+  },
+  {
+    id: "icecream", theme: "food", also: ["mfg"],     name: "Ice Cream Plant",
+    url: "icecream/",
+    desc: "Mix, pasteurize, freeze and harden. Design a flavor and follow it through the plant.",
+    basis: "",
+    courses: [250, 310, 311, 320, 326, 426, 430, 440, 450, 470, 540, 547, 560],
+  },
+  {
+    id: "ro", theme: "env",     name: "Seawater Reverse Osmosis",
+    url: "ro/",
+    desc: "Turn seawater into drinking water with membranes, and see the energy it takes.",
+    basis: "",
+    courses: [250, 310, 311, 320, 326, 426, 430, 440, 450, 470, 540, 547],
+  },
+  {
+    id: "gameday", theme: "products",     name: "Gameday ChemE",
+    url: "gameday/",
+    desc: "The chemical engineering in a football game: turf, ball, helmets, players and stadium.",
+    basis: "",
+    courses: [250, 310, 311, 320, 326, 426, 430, 440, 450, 470, 540, 547, 560],
+  },
+  {
+    id: "campus", theme: "energy", also: ["env"],     name: "Campus Energy",
+    url: "campus/",
+    desc: "How UW–Madison heats, cools and powers 319 buildings, and the paths to cut carbon.",
+    basis: "",
+    courses: [450, 250, 310, 311, 320, 326, 426, 430, 440, 470, 512, 540, 560],
+  },
+  {
+    id: "shoe", theme: "products", also: ["health"],     name: "Running Shoe Foam",
+    url: "shoe/",
+    desc: "Why running shoes bounce. Foam a plastic with gas, set your pace, and measure energy return.",
+    basis: "",
+    courses: [250, 255, 310, 311, 320, 440, 450, 540, 547],
+  },
+  {
+    id: "farm", theme: "food", also: ["env"],     name: "Modern Agriculture",
+    url: "farm/",
+    desc: "Grow a Wisconsin season: fertilizer, water, seed traits, smart tractors and manure digesters.",
+    basis: "",
+    courses: [250, 255, 310, 311, 320, 326, 355, 426, 430, 450, 470, 512, 547, 560],
+  },
+  {
+    id: "battery", theme: "energy", also: ["mfg"],     name: "Lithium-Ion Battery",
+    url: "battery/",
+    desc: "From brine and mines to cells, an electric car and recycling. Charge a cell, track its carbon.",
+    basis: "",
+    courses: [250, 255, 310, 311, 320, 326, 426, 430, 440, 450, 470, 512, 540],
+  },
+  {
+    id: "body", theme: "health",     name: "The Human Body",
+    url: "body/",
+    desc: "Lungs, heart, kidneys and liver as a chemical plant. Change activity, meals or weather.",
+    basis: "",
+    courses: [250, 255, 310, 320, 326, 426, 430, 470, 560],
+  },
+  {
+    id: "ice", theme: "env",
+    name: "Lake Mendota Ice",
+    url: "ice/",
+    desc: "Watch Lake Mendota freeze over a real Madison winter, see when the ice is safe for fishing, and how warming shrinks it.",
+    basis: "",
+    courses: [150, 250, 255, 310, 320, 324, 326, 355, 450, 512],
+  },
+  {
+    id: "brewery", theme: "food", also: ["mfg"],
+    name: "Brewery",
+    url: "brewery/",
+    desc: "From grain to glass: watch yeast turn sugar into alcohol and bubbles, and run a fermentation yourself.",
+    basis: "",
+    courses: [560, 430, 250, 255, 310, 311, 320, 326, 426, 450, 470],
+  },
+];
+
+TWINS.sort((a, b) => (b.first ? 1 : 0) - (a.first ? 1 : 0) || ORDER.indexOf(a.theme) - ORDER.indexOf(b.theme));   // featured twin first, then by theme
+
+const grid = document.getElementById("grid"), themesEl = document.getElementById("themes"), subj = document.getElementById("subject");
+let theme = null, active = null;
+try { theme = localStorage.getItem("twin-theme") || null; const v = localStorage.getItem("twin-filter"); if (v) active = +v; } catch (e) {}
+const SHOW = 3;
+function card(t) {
+  const el = document.createElement("article");
+  el.className = "plate";
+  const ths = [t.theme, ...(t.also || [])].map(k => THEMES[k]);
+  const chip = n => `<a class="course" href="${courseUrl(n)}" target="_blank" rel="noopener" title="CBE ${n}: ${COURSES[n]}">${LABEL[n]} ↗</a>`;
+  const first = active && t.courses.includes(active) ? [active, ...t.courses.filter(n => n !== active)] : t.courses;
+  const rest = first.slice(SHOW);
+  el.innerHTML = `
+    <a class="pic" href="${t.url}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+      <img src="img/${t.id}.jpg" alt="" loading="lazy" width="640" height="384">
+      <span class="themes">${ths.map(th => `<span class="theme" style="--th:${th.color}"><i></i>${th.label}</span>`).join("")}</span></a>
+    <div class="txt">
+      <h2>${t.name}</h2>
+      <p class="desc">${t.desc}</p>
+      <a class="open" href="${t.url}" target="_blank" rel="noopener">Explore ↗</a>
+    </div>`;
+  return el;
+}
+function render() {
+  grid.replaceChildren();
+  const list = TWINS.filter(t => (!theme || t.theme === theme || (t.also || []).includes(theme)) && (!active || t.courses.includes(active)));
+  if (!list.length) { const p = document.createElement("p"); p.className = "empty"; p.textContent = "No digital twin matches this theme and subject yet."; grid.append(p); }
+  list.forEach(t => grid.append(card(t)));
+  themesEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.t || null) === theme)));
+  subj.value = active ?? "";
+}
+const save = () => { try { localStorage.setItem("twin-theme", theme ?? ""); localStorage.setItem("twin-filter", active ?? ""); } catch (e) {} };
+const mk = (key) => { const b = document.createElement("button"); b.type = "button"; b.dataset.t = key ?? "";
+  if (key) { b.style.setProperty("--th", THEMES[key].color); b.innerHTML = `<i></i>${THEMES[key].label}`; } else b.textContent = "All twins";
+  b.onclick = () => { theme = key; save(); render(); }; return b; };
+themesEl.append(mk(null), ...ORDER.map(mk));
+const used = [...new Set(TWINS.flatMap(t => t.courses))].sort((a, b) => a - b);
+subj.innerHTML = `<option value="">Any subject</option>` + used.map(c => `<option value="${c}">${LABEL[c]} (CBE ${c})</option>`).join("");
+subj.onchange = () => { active = subj.value ? +subj.value : null; save(); render(); };
+if (active && !used.includes(active)) active = null;
+if (theme && !THEMES[theme]) theme = null;
+render();
+</script>
