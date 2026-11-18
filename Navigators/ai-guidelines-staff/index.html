@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="UW-Madison rules and CBE recommendations for administrative staff using generative AI at work, with a self-check quiz.">
+<style>
+  [hidden] { display: none !important; }
+  img { max-width: 100%; }
+</style>
+<title>CBE Generative AI Guidelines for Staff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@600;800&family=Red+Hat+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a reference sheet. Audience switch on top, an at-a-glance strip, then numbered sections; policy vs. guidance encoded as colored pills. */
+  :root {
+    --bg: #ffffff; --surface: #f6f5f4; --ink: #232223; --muted: #5d5c60; --line: #dedcdc;
+    --accent: #c5050c;          /* UW red */
+    --policy: #b0050b; --policy-bg: #fdf0f0;
+    --cbe: #22703a; --cbe-bg: #eef7f0;
+    --best: #0b6e99; --best-bg: #ecf5f9;
+    --display: "Red Hat Display", "Helvetica Neue", Arial, sans-serif;
+    --body: "Red Hat Text", "Helvetica Neue", Arial, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161516; --surface: #211f21; --ink: #ecebea; --muted: #a9a7a8; --line: #363335;
+      --accent: #ff5a5f; --policy: #ff7a7e; --policy-bg: #2c1819; --cbe: #6fcf8a; --cbe-bg: #172619;
+      --best: #6cc3ea; --best-bg: #13232b; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161516; --surface: #211f21; --ink: #ecebea; --muted: #a9a7a8; --line: #363335;
+    --accent: #ff5a5f; --policy: #ff7a7e; --policy-bg: #2c1819; --cbe: #6fcf8a; --cbe-bg: #172619;
+    --best: #6cc3ea; --best-bg: #13232b; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+  .wrap { max-width: 1320px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  a { color: var(--best); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  header { border-bottom: 3px solid var(--accent); padding: 22px 0 14px; }
+  .dept { color: var(--accent); font: 700 13px var(--body); letter-spacing: .02em; }
+  h1 { font: 800 clamp(26px, 4vw, 34px)/1.15 var(--display); margin: 4px 0 6px; text-wrap: balance; }
+  .meta { color: var(--muted); font-size: 13px; margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 10px; font-size: 13px; color: var(--muted); align-items: center; }
+  .pill { display: inline-block; font: 700 11px/1 var(--body); letter-spacing: .05em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; white-space: nowrap; vertical-align: middle; }
+  .p-policy { background: var(--policy-bg); color: var(--policy); border: 1px solid var(--policy); }
+  .p-cbe { background: var(--cbe-bg); color: var(--cbe); border: 1px solid var(--cbe); }
+  .p-best { background: var(--best-bg); color: var(--best); border: 1px solid var(--best); }
+  .switch { display: flex; gap: 6px; margin: 16px 0 4px; flex-wrap: wrap; }
+  .switch a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; font-weight: 700; font-size: 14px; }
+  .switch a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .view[hidden] { display: none; }
+  .lede { font-size: 16px; color: var(--muted); margin: 14px 0; max-width: 100ch; }
+  .glance { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 8px 0 6px; }
+  .g { border-radius: 10px; padding: 12px 14px; border-top: 4px solid; }
+  .g h3 { margin: 0 0 6px; font: 800 15px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+  .g ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+  .g-must { background: var(--policy-bg); border-color: var(--policy); } .g-must h3 { color: var(--policy); }
+  .g-should { background: var(--best-bg); border-color: var(--best); } .g-should h3 { color: var(--best); }
+  .g-ask { background: var(--cbe-bg); border-color: var(--cbe); } .g-ask h3 { color: var(--cbe); }
+  section { padding: 18px 0 4px; border-top: 1px solid var(--line); margin-top: 18px; }
+  h2 { font: 800 21px/1.2 var(--display); margin: 0 0 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; text-wrap: balance; }
+  h2 .n { color: var(--accent); }
+  h3.sub { font: 700 16px var(--display); margin: 14px 0 6px; }
+  ul.list, ol.list { margin: 0 0 8px; padding-left: 20px; display: grid; gap: 5px; max-width: 110ch; }
+  .tbl { overflow-x: auto; margin: 6px 0 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { background: var(--surface); font-weight: 700; }
+  td.tier { font-weight: 700; white-space: nowrap; }
+  .no { color: var(--policy); font-weight: 700; }
+  .note { font-size: 13px; color: var(--muted); margin: 4px 0 10px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ok, .notok { border-radius: 10px; padding: 12px 14px; }
+  .ok { background: var(--cbe-bg); } .notok { background: var(--policy-bg); }
+  .ok h4, .notok h4 { margin: 0 0 6px; font: 700 15px var(--display); }
+  .ok h4 { color: var(--cbe); } .notok h4 { color: var(--policy); }
+  .ok ul, .notok ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+  .sample { background: var(--surface); border-left: 4px solid var(--best); border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 6px 0 10px; max-width: 110ch; }
+  .sample b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 4px; }
+  .sample p { margin: 0; font-style: italic; }
+  .copy { margin-top: 8px; font: 600 12px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  .lv-a { color: var(--cbe); } .lv-b { color: var(--best); } .lv-c { color: var(--policy); }
+  .links { display: grid; gap: 8px; font-size: 14px; }
+  .scope { font-size: 13px; margin: 8px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--best-bg); max-width: 130ch; }
+  .nest { margin: 8px 0 6px; }
+  .nest div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; margin-top: 8px; }
+  .nest .n1 { background: var(--surface); margin-top: 0; }
+  .nest .n2 { background: var(--bg); } .nest .n3 { background: var(--surface); } .nest .n4 { background: var(--best-bg); border-color: var(--best); } .nest .n5 { background: var(--bg); border-color: var(--best); }
+  .nest b { font: 800 14px var(--display); } .nest span { font-size: 13px; color: var(--muted); }
+  .recipe { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .recipe > div, .challenges > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; align-content: start; }
+  .recipe b { font: 800 15px var(--display); color: var(--best); }
+  .recipe span, .challenges span { font-size: 13px; color: var(--muted); }
+  .phrases { display: flex; flex-wrap: wrap; gap: 6px; }
+  .phrases span { background: var(--best-bg); color: var(--ink); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-style: italic; }
+  .challenges { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .challenges b { font: 800 15px var(--display); }
+  @media (max-width: 900px) { .recipe { grid-template-columns: 1fr 1fr; } }
+  .cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .cgrid > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 3px; font-size: 14px; }
+  .cgrid span { color: var(--muted); font-size: 13px; }
+  .gloss { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; margin: 6px 0 0; }
+  .gloss > div { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 14px; background: var(--bg); }
+  .gloss dt { font: 800 15px var(--display); margin-bottom: 3px; }
+  .gloss dd { margin: 0; font-size: 14px; color: var(--muted); }
+  .links div b { display: inline-block; min-width: 120px; }
+  footer { color: var(--muted); font-size: 12px; padding: 20px 0 32px; border-top: 1px solid var(--line); margin-top: 20px; }
+  .hub-h { font: 800 18px var(--display); margin: 22px 0 10px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 480px) { .tiles { grid-template-columns: 1fr; } }
+  .tile { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; transition: border-color .15s, transform .15s; }
+  .tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .tile .num { font: 800 13px var(--display); color: var(--accent); }
+  .tile .tt { font: 800 17px/1.25 var(--display); }
+  .tile .td { font-size: 14px; color: var(--muted); }
+  .tile .tp { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+  .tile .go { color: var(--accent); font-weight: 700; font-size: 13px; }
+  .crumb { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px; margin: 16px 0 4px; }
+  .crumb { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background: var(--bg); padding-block: 10px; margin: 6px 0 4px !important; border-bottom: 1px solid var(--line); }
+  .crumb a, .pager a.home { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font: 800 15px var(--display); color: #fff; background: var(--accent); border-radius: 999px; padding: 9px 18px; box-shadow: 0 2px 8px rgba(197, 5, 12, .25); }
+  .crumb a:hover, .pager a.home:hover { filter: brightness(1.08); }
+  .pager a.home { align-self: center; color: #fff; border: 0; }
+  .crumb span { color: var(--muted); }
+  section.page { border-top: 0; margin-top: 6px; padding-top: 6px; }
+  .pager { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 22px 0 4px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-weight: 700; font-size: 14px; max-width: 48%; }
+  .pager a:hover { border-color: var(--accent); }
+  .pager small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; }
+  .pager .next { margin-left: auto; text-align: right; }
+  @media (prefers-reduced-motion: reduce) { .tile { transition: none; } .tile:hover { transform: none; } }
+  @media (max-width: 720px) { .glance, .two { grid-template-columns: 1fr; } }
+
+  .quiz { display: grid; gap: 12px; }
+  .q { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--bg); }
+  .q-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+  .q-head b { font: 800 15px var(--display); }
+  .q-opts { display: grid; gap: 6px; }
+  .q-opts button { text-align: left; font: 500 14px var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+  .q-opts button:hover:not(:disabled) { border-color: var(--accent); }
+  .q-opts button.right { background: var(--cbe-bg); border-color: var(--cbe); color: var(--cbe); font-weight: 700; }
+  .q-opts button.wrong { background: var(--policy-bg); border-color: var(--policy); color: var(--policy); }
+  .q-opts button:disabled { cursor: default; }
+  .q-why { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+  .score { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 8px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-weight: 700; }
+  .score button, .copyall { font: 600 13px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
+  .bank { display: grid; gap: 10px; }
+  .bank ol { margin: 6px 0 0; padding-left: 22px; list-style: upper-alpha; font-size: 14px; display: grid; gap: 3px; }
+  .bank li.key { color: var(--cbe); font-weight: 700; }
+  .bank li.key::after { content: "  ✓ correct"; font-weight: 600; font-size: 12px; }
+  .src-link { font-size: 13px; margin: 2px 0 10px; }
+  .results { margin-top: 16px; border: 2px solid var(--ink); border-radius: 14px; padding: 16px 18px; background: var(--bg); display: grid; gap: 10px; max-width: 760px; }
+  .r-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+  .r-head b { font: 800 20px var(--display); }
+  .r-head span { color: var(--muted); font-size: 13px; }
+  .r-name { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
+  .r-name input { font: 600 16px var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; min-width: 0; flex: 1 1 220px; }
+  .r-score { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+  .r-score b { font: 800 34px var(--display); font-variant-numeric: tabular-nums; }
+  .r-score span { color: var(--muted); font-size: 14px; }
+  .r-rows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; font-size: 13px; }
+  @media (max-width: 560px) { .r-rows { grid-template-columns: 1fr; } }
+  .r-row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid var(--line); }
+  .r-row .n { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 22px; }
+  .r-row .t { flex: 1; min-width: 0; }
+  .r-row .r-ok { color: var(--cbe); font-weight: 700; white-space: nowrap; }
+  .r-row .r-miss { color: var(--policy); font-weight: 700; white-space: nowrap; }
+  .r-progress { color: var(--muted); font-size: 14px; }
+  .r-note { margin: 0; font-size: 12px; color: var(--muted); }
+  .score a { font-weight: 700; }
+  .src-link a { font-weight: 600; }
+  .scope-box { margin: 12px 0 4px; padding: 12px 16px; border-radius: 10px; border: 2px solid var(--best); background: var(--best-bg); display: grid; gap: 4px; max-width: 130ch; }
+  .scope-box > b { font: 800 16px var(--display); color: var(--best); }
+  .scope-box span { font-size: 14px; }
+</style>
+<style>
+  header { padding: 10px 0 14px; border-bottom: none; }
+  h1 { margin: 2px 0 4px; }
+  .scope-box { margin: 8px 0 2px; padding: 8px 14px; gap: 2px; }
+  .legend { margin-top: 6px; }
+  .scope { margin-top: 6px; padding: 6px 10px; }
+  .glance { margin: 4px 0 2px; gap: 8px; }
+  .g { padding: 7px 12px; }
+  .g h3 { margin-bottom: 4px; }
+  .g ul { gap: 1px; font-size: 13.5px; line-height: 1.45; }
+  .tiles { gap: 10px; }
+  .tile { padding: 11px 14px; gap: 3px; }
+  .tile .td { font-size: 13.5px; line-height: 1.4; }
+  .scope-box span, .scope { font-size: 13px; line-height: 1.45; }
+  .g ul { font-size: 13px; }
+  .hub-h { margin: 6px 0 5px; font-size: 17px; }
+  .tile { padding: 9px 13px; }
+  .tile .tt { font-size: 16px; }
+  footer { padding: 4px 0 4px; margin-top: 6px; }
+</style>
+<style>
+  header { padding-bottom: 20px; }
+  .glance { margin: 10px 0 4px; gap: 12px; }
+  .hub-h { margin: 22px 0 10px; }
+  .tiles { gap: 12px; }
+  section.page h3.sub { margin-top: 26px; }
+  section.page h4 { margin-top: 18px; }
+  section.page .two, section.page .sample, section.page .list { margin-top: 12px; margin-bottom: 12px; }
+  footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; margin-top: 24px; padding: 12px 0 18px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="dept">Department of Chemical &amp; Biological Engineering · UW–Madison</div>
+    <h1>Generative AI Guidelines for CBE Staff</h1>
+    <div class="scope-box">
+      <b>This guide is about generative AI at work, mainly large language models.</b>
+      <span>That means chatbots and assistants that write text, summarize documents or analyze spreadsheets, such as Microsoft Copilot, Google Gemini, ChatGPT and Claude. It is written for CBE administrative staff: finance, payroll and benefits, administration, the undergraduate and graduate programs, communications, and IT. In this guide, "AI" means generative AI. <a href="#staff-glossary">How the terms relate →</a></span>
+    </div>
+    <div class="legend">
+      <span><span class="pill p-policy">UW policy</span> a university rule you must follow</span>
+      <span><span class="pill p-best">Recommended</span> advice for using AI well, not a rule</span>
+    </div>
+    <p class="scope" style="background:var(--policy-bg)">Only items marked <b>UW policy</b> are university rules. Everything else in this guide is a recommendation from the CBE department. Your supervisor's and your office's own procedures always apply.</p>
+  </div>
+</header>
+<main class="wrap">
+<div class="view" id="view-staff">
+  <div class="hub">
+  <div class="glance">
+    <div class="g g-must"><h3>Must <span class="pill p-policy">UW policy</span></h3><ul>
+      <li>Keep sensitive data (student records, personal info, IDs, health, personnel matters) out of AI tools</li>
+      <li>Use only UW NetID tools for internal work documents</li>
+      <li>You're responsible for anything you send, sign or submit, including AI mistakes</li>
+      <li>Report a possible data exposure right away</li></ul></div>
+    <div class="g g-should"><h3>Recommended</h3><ul>
+      <li>Check every number, name, date and amount before you use it</li>
+      <li>Remove names and IDs, or use made-up data, when you try something new</li>
+      <li>Start with tedious, repetitive tasks</li>
+      <li>Keep a person in charge of decisions, approvals and signatures</li></ul></div>
+    <div class="g g-ask"><h3>Ask</h3><ul>
+      <li>Not sure if data is sensitive? Assume it is and ask</li>
+      <li>Not sure a tool is approved? Check <a href="https://it.wisc.edu/ai/">it.wisc.edu/ai</a> or the <a href="https://it.wisc.edu/help/">DoIT Help Desk</a></li>
+      <li>Want to try AI on a team task? Talk to your supervisor first</li></ul></div>
+  </div>
+  <h2 class="hub-h">Pick a topic</h2>
+  <div class="tiles" id="tiles-staff"></div>
+  </div>
+
+  <section class="page" data-page="staff-check" data-desc="A 5-step check before you use AI on a work task" hidden>
+    <h2>Can I use AI on this task?</h2>
+    <ol class="list">
+      <li><b>Look at the data.</b> What would you paste or upload? Find its level in the data table (next topic).</li>
+      <li><b>Sensitive or restricted data?</b> Stop. Remove names, IDs and amounts tied to people, or don't use AI for this task.</li>
+      <li><b>Internal data</b> (drafts, procedures, schedules, department budgets): use only a UW NetID tool such as Microsoft Copilot Chat or Google Gemini.</li>
+      <li><b>Public data</b> (published pages, public course listings): any tool is fine, but a UW tool is still the better habit.</li>
+      <li><b>Check before you use it.</b> Verify the output yourself. AI drafts; you decide, approve and sign.</li>
+    </ol>
+    <div class="sample"><b>Quick rule</b><p>If you wouldn't post it on the department website, it goes only into a UW NetID tool. If you wouldn't email it to a colleague in another department, it doesn't go into AI at all.</p></div>
+  </section>
+
+  <section class="page" data-page="staff-policy" data-desc="Data levels with staff examples, approved tools and the formal policies" hidden>
+    <h2>University policy: what is required <span class="pill p-policy">UW policy</span></h2>
+    <h3 class="sub">Protecting data</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Data (UW–Madison tier)</th><th>Examples you might handle</th><th>Allowed in AI tools?</th></tr></thead>
+      <tbody>
+        <tr><td class="tier">Public</td><td>Department web pages, published news stories, public course listings and timetables, public event announcements, published policies</td><td>Yes, in any tool (still verify the output)</td></tr>
+        <tr><td class="tier">Internal</td><td>Draft documents and emails, internal procedures, room and visitor schedules, meeting notes without personal details, department budget summaries, de-identified spreadsheets</td><td>Only in <b>UW-approved tools</b> with NetID login</td></tr>
+        <tr><td class="tier">Sensitive / Restricted</td><td>Student records (grades, ID numbers, advising notes, disability or conduct information), Social Security and bank numbers, card numbers on receipts, health and leave information, personnel and performance matters, passwords, confidential proposals and sponsor documents</td><td><span class="no">No</span>, unless the specific tool and use have passed a UW cybersecurity risk review</td></tr>
+      </tbody></table></div>
+    <p class="note">Student education records are also protected by federal law (<a href="https://registrar.wisc.edu/ferpa/">FERPA</a>). UW–Madison Policy UW-504 (Data Classification) is retired on Dec 31, 2026. From Jan 1, 2027 campus uses UW System Administrative Policy 1031 and its three tiers (Low / Moderate / High risk). The rule stays the same: protected data stays out of AI tools unless the tool is approved for it.</p>
+    <p class="src-link">Official source: <a href="https://it.wisc.edu/generative-ai-services-uw-madison/generative-ai-uw-madison-use-policies/">UW–Madison generative AI use policies</a> · <a href="https://it.wisc.edu/learn/data-classification/">UW data classification</a></p>
+    <h3 class="sub">Which tools are authorized?</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Tool</th><th>Status</th><th>Data allowed</th></tr></thead>
+      <tbody>
+        <tr><td class="tier">Microsoft Copilot Chat, Google Gemini, Gemini Notebook (NotebookLM), Google Workspace Studio, Zoom AI Companion, Webex AI Assistant</td><td>Authorized, free with NetID</td><td>Public and Internal</td></tr>
+        <tr><td class="tier">Microsoft 365 Copilot (premium)</td><td>Authorized with a paid license</td><td>Public and Internal; Sensitive only after a UW review of that use</td></tr>
+        <tr><td class="tier">Free ChatGPT, personal Claude or Gemini accounts, browser plug-ins, AI note-takers you install yourself</td><td><span class="no">Not authorized</span> for university data</td><td>Public only: treat everything you type as a public post</td></tr>
+      </tbody></table></div>
+    <p class="note">The <a href="https://it.wisc.edu/ai/anthropic-claude-sso-netid-login/">NetID login for Claude (Nov 2, 2026)</a> adds sign-in security only: accounts stay personal, UW can't see them, and there are no added UW data protections. Claude is not on the approved list. Current list: <a href="https://it.wisc.edu/ai/">UW–Madison Generative AI services</a>. Not on that list? Treat the tool as public.</p>
+    <h3 class="sub">Formal documents behind these rules</h3>
+    <ul class="list refs">
+      <li><a href="https://it.wisc.edu/ai/generative-ai-uw-madison-use-policies/">Generative AI @ UW–Madison: use &amp; policies</a> (UW–Madison Information Technology, version 3)</li>
+      <li><a href="https://policy.wisc.edu/library/UW-504">UW–Madison Policy UW-504: Data Classification</a> (in effect through Dec 31, 2026) and <a href="https://www.wisconsin.edu/uw-policies/uw-system-administrative-policies/information-security-data-classification-and-protection/">UW System Administrative Policy 1031: Data Classification and Protection</a> (from Jan 1, 2027)</li>
+      <li><a href="https://registrar.wisc.edu/ferpa/">FERPA at UW–Madison</a>: privacy of student education records</li>
+      <li><a href="https://www.wisconsin.edu/regents/policies/acceptable-use-of-information-technology-resources/">Regent Policy Document 25-3: Acceptable Use of Information Technology Resources</a></li>
+      <li><a href="https://policy.wisc.edu/library/UW-509">UW–Madison Policy UW-509: Incident Reporting and Response</a>: report a possible data exposure, including through AI</li>
+    </ul>
+    <p class="note"><b>Status, November 2026.</b> These are the rules in force. The College of Engineering has no separate college-wide generative AI policy, so UW policy applies. Under the campus <a href="https://news.wisc.edu/uw-madison-designates-2026-as-the-year-of-ai-readiness-and-competency/">2026 Year of AI Readiness and Competency</a>, a provost's working group is writing a plain-language statement on acceptable AI use; this guide will be updated when it is published.</p>
+  </section>
+
+  <section class="page" data-page="staff-sensitive" data-desc="Student records, personal information and budgets: how to protect them" hidden>
+    <h2>Working with sensitive data <span class="pill p-policy">UW policy</span> <span class="pill p-best">Recommended</span></h2>
+    <p class="note" style="margin-top:0">Much of our work touches information that would hurt students, colleagues or the department if it leaked. AI can still help with that work, as long as the sensitive part never goes in.</p>
+    <h3 class="sub">Never paste or upload <span class="pill p-policy">UW policy</span></h3>
+    <ul class="list">
+      <li>Student names together with grades, ID numbers, advising notes, financial aid, disability or conduct information</li>
+      <li>Social Security, bank, card or account numbers, including on scanned receipts and forms</li>
+      <li>Health, leave or accommodation information, and personnel or performance matters</li>
+      <li>Passwords, and confidential sponsor or proposal documents</li>
+    </ul>
+    <h3 class="sub">How to get help anyway <span class="pill p-best">Recommended</span></h3>
+    <div class="two">
+      <div class="ok"><h4>Do</h4><ul>
+        <li>Replace names and IDs with placeholders (Student A, Account 1) before you paste</li>
+        <li>Build the tool or template with made-up data, then fill in the real data yourself, outside AI</li>
+        <li>Ask AI about the structure: "Write a formula that totals column C by category"</li>
+        <li>Use aggregates instead of rows: totals by category, not lines by person</li>
+        <li>Keep the real file in UW storage (Box, OneDrive, Google Drive with NetID)</li></ul></div>
+      <div class="notok"><h4>Don't</h4><ul>
+        <li>Upload a class roster or a Workday export with names and IDs</li>
+        <li>Paste a salary, payroll or reimbursement spreadsheet with names</li>
+        <li>Upload receipts that show card numbers or home addresses</li>
+        <li>Ask AI to draft a personnel or student-conduct decision</li>
+        <li>Assume a NetID login makes a personal account safe</li></ul></div>
+    </div>
+    <h3 class="sub">Budgets</h3>
+    <ul class="list">
+      <li>Department budget summaries and category totals are internal: UW NetID tools only.</li>
+      <li>Lines that identify a person (salary, payout, reimbursement to a named person) or contain account and banking details: keep them out, or replace them with placeholders.</li>
+      <li>Sponsor budgets in proposals that are not yet submitted are confidential: ask before using any AI tool.</li>
+    </ul>
+  </section>
+
+  <section class="page" data-page="staff-practice" data-desc="OK vs. not-OK examples for finance, programs, communications and IT" hidden>
+    <h2>Using AI well at work <span class="pill p-best">Recommended</span></h2>
+    <h3 class="sub">Examples by area (with a UW NetID tool)</h3>
+    <div class="cgrid">
+      <div><b>Finance, payroll &amp; travel</b><span>Summarize a reimbursement policy into a checklist; draft a clear email explaining a missing receipt; check a travel report against the checklist. Not: uploading receipts with card numbers or payroll files with names.</span></div>
+      <div><b>Workday &amp; forms</b><span>Ask how to do a Workday task step by step; turn a long procedure into a one-page guide. Not: pasting worker or student data from Workday.</span></div>
+      <div><b>Documents for signature</b><span>Check that a document has every required section, date and attachment before routing it. AI never signs, approves or decides.</span></div>
+      <div><b>Undergraduate &amp; graduate programs</b><span>Draft a room plan from the public timetable; balance advisor or TA loads using placeholders; draft program emails. Not: student records, grades or advising notes.</span></div>
+      <div><b>Communications</b><span>Draft news stories and posts from your notes; keep visitor schedules and fill in meeting grids; suggest headlines and alt text. Check names, titles and facts every time.</span></div>
+      <div><b>IT &amp; instrument shop</b><span>Explain an error message; draft how-to pages; plan an inventory sheet. Not: passwords, network details or license keys.</span></div>
+    </div>
+    <h3 class="sub">Six uses that work well</h3>
+    <div class="challenges">
+      <div><b>Spreadsheet to dashboard</b><span>Turn static numbers into an interactive view with charts and filters (use made-up or aggregated data).</span></div>
+      <div><b>Assignments</b><span>Draft a first pass at TA, room or advisor assignments from rules you write down, then review every match.</span></div>
+      <div><b>Compliance checks</b><span>Check a proposal or a current &amp; pending document against the sponsor's checklist and list what is missing.</span></div>
+      <div><b>Task tracking</b><span>Keep a task navigator for yourself or a team: owners, due dates and status in one view.</span></div>
+      <div><b>Meeting notes to actions</b><span>Turn raw notes into decisions and action items with owners and dates.</span></div>
+      <div><b>Better visuals</b><span>Make long documents and data easier to digest: one-page summaries, timelines, diagrams.</span></div>
+    </div>
+    <h3 class="sub">Check before you use it</h3>
+    <ul class="list">
+      <li>Compare every number, date, name and dollar amount with the source.</li>
+      <li>Check totals yourself; AI can add wrong and still sound sure.</li>
+      <li>Confirm policy statements against the official page. AI can invent rules and links.</li>
+      <li>Read the whole draft before you send it. Tone matters as much as facts.</li>
+    </ul>
+  </section>
+
+  <section class="page" data-page="staff-skills" data-desc="How to write a good prompt, with phrases and practice tasks" hidden>
+    <h2>Build your AI skills <span class="pill p-best">Recommended</span></h2>
+    <p class="note">Using AI well is a skill, and like any skill it takes practice. Try these with public or made-up data first.</p>
+    <h3 class="sub">Write a good prompt: five ingredients</h3>
+    <div class="recipe">
+      <div><b>Context</b><span>Who you are and what you're working on: "I coordinate travel reimbursements for an engineering department…"</span></div>
+      <div><b>Task</b><span>Exactly what you want: summarize, draft, check, compare, or turn into a table.</span></div>
+      <div><b>Constraints</b><span>Limits: "use only the policy text I pasted, under 150 words, friendly tone."</span></div>
+      <div><b>Format</b><span>How to answer: "a checklist", "a table with columns Item, Required, Missing".</span></div>
+      <div><b>Check</b><span>Ask it to show its work: "list anything you weren't sure about."</span></div>
+    </div>
+    <div class="two" style="margin-top:10px">
+      <div class="notok"><h4>Weak prompt</h4><p style="margin:0;font-style:italic">"Write an email about the travel report."</p></div>
+      <div class="ok"><h4>Strong prompt</h4><p style="margin:0;font-style:italic">"I process travel reimbursements. Draft a short, friendly email to a faculty member whose report is missing a hotel receipt and the conference agenda. Explain what is needed and the deadline (Dec 5). Under 120 words, no jargon."</p></div>
+    </div>
+    <h3 class="sub">Useful phrases</h3>
+    <div class="phrases">
+      <span>"Ask me questions before you start."</span><span>"Use only the text I pasted."</span><span>"Turn this into a checklist."</span>
+      <span>"Make this shorter and friendlier."</span><span>"Put this in a table."</span><span>"What is missing from this document?"</span>
+      <span>"List anything you are unsure about."</span><span>"Explain it as you would to a new staff member."</span><span>"Give me three options."</span>
+    </div>
+    <h3 class="sub">Practice tasks</h3>
+    <div class="challenges">
+      <div><b>📄 Policy to checklist</b><span>Paste a public UW policy page and ask for a one-page checklist. Compare it with the original. Did it miss or invent anything?</span></div>
+      <div><b>📊 Numbers to picture</b><span>Make up a small budget-by-category table and ask for a chart and three takeaways. Check the totals yourself.</span></div>
+      <div><b>✉️ Draft and polish</b><span>Write a quick, rough email and ask for a clearer, friendlier version. Keep what sounds like you.</span></div>
+      <div><b>🗓️ Schedule a visit</b><span>Give a made-up visitor's availability and a list of meetings, and ask for a day schedule. Check every time slot.</span></div>
+      <div><b>📝 Notes to actions</b><span>Paste meeting notes without names and ask for decisions, actions, owners and dates.</span></div>
+      <div><b>🔎 Catch the mistake</b><span>Ask AI a question about a UW procedure you know well. Where is it right, and where is it confidently wrong?</span></div>
+    </div>
+  </section>
+
+  <section class="page" data-page="staff-help" data-desc="Unsure about data or tools, and what to do after a mistake" hidden>
+    <h2>What to do if…</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Situation</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>You're not sure whether data is sensitive</td><td>Treat it as sensitive and ask your supervisor, or the <a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/">Office of Cybersecurity</a>.</td></tr>
+        <tr><td>You're not sure a tool is approved</td><td>Check <a href="https://it.wisc.edu/ai/">it.wisc.edu/ai</a>. If it isn't listed, treat it as public. Questions: <a href="https://it.wisc.edu/help/">DoIT Help Desk</a>, 608-264-4357.</td></tr>
+        <tr><td>A vendor or app turns on a new AI feature</td><td>Don't use it with university data until you've checked with IT that it is approved.</td></tr>
+        <tr><td>You want AI to help with a recurring team process</td><td>Talk with your supervisor first; agree on what data goes in and who checks the results.</td></tr>
+        <tr><td>You may have entered sensitive data into an AI tool</td><td>Stop, and tell your supervisor. Suspected data incidents must be reported: <a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/reporting-an-incident-to-it-security/">report it to the UW Office of Cybersecurity</a> (urgent: DoIT Help Desk, 608-264-4357, option 3).</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section class="page" data-page="staff-glossary" data-desc="Plain-language definitions: AI, large language models, data levels and more" hidden>
+    <h2>Glossary</h2>
+    <p class="note">Plain-language definitions of the terms used in these guidelines.</p>
+    <div class="nest" role="img" aria-label="Nested terms: artificial intelligence contains machine learning, which contains deep learning, which contains generative AI and large language models">
+      <div class="n1"><b>Artificial intelligence</b><span>Any computer system doing tasks that need human-like intelligence</span>
+        <div class="n2"><b>Machine learning</b><span>Learns patterns from data</span>
+          <div class="n3"><b>Deep learning</b><span>Many-layered neural networks</span>
+            <div class="n4"><b>Generative AI</b><span>Creates new text, images or code</span>
+              <div class="n5"><b>Large language models</b><span>Text-based generative AI behind chatbots</span></div></div></div></div></div>
+    </div>
+    <dl class="gloss">
+      <div><dt>Generative AI</dt><dd>AI that creates new content (text, tables, images, code) based on patterns learned from large amounts of data. Copilot, Gemini, ChatGPT and Claude are examples.</dd></div>
+      <div><dt>Large language model</dt><dd>The engine behind AI chatbots: a model trained on huge amounts of text to predict the next word. It produces fluent answers, but it doesn't check facts the way a person would.</dd></div>
+      <div><dt>AI tool vs. model</dt><dd>The model is the engine. The tool or product (a chat app, a plug-in) wraps it with an interface and data protections. The same model can be safe in one tool and unsafe in another.</dd></div>
+      <div><dt>Prompt</dt><dd>The question, instructions or material you type or upload into an AI tool. Treat a prompt in a consumer tool like a public post.</dd></div>
+      <div><dt>Hallucination</dt><dd>When AI states something false with confidence: wrong numbers, invented rules, fake links. This is why you check everything.</dd></div>
+      <div><dt>Artifact</dt><dd>A small interactive page an AI assistant builds for you, such as a dashboard or a task tracker, that you can open and use like a website.</dd></div>
+      <div><dt>AI agent</dt><dd>An AI system that can take actions on its own (send messages, edit files, fill forms) to reach a goal. Keep a person in charge of anything it sends or changes.</dd></div>
+      <div><dt>UW-approved tool</dt><dd>An AI service UW–Madison provides with a NetID login and contract protections for university data, such as Microsoft Copilot Chat or Google Gemini.</dd></div>
+      <div><dt>Consumer tool</dt><dd>A personal or free AI account (e.g., free ChatGPT or a personal Claude account). It has no UW data protections, even if you sign in with your NetID.</dd></div>
+      <div><dt>Data classification</dt><dd>UW's system for labeling data by risk (Public, Internal, Sensitive, Restricted; becoming Low, Moderate and High risk in 2027). It decides which data may go into which tools.</dd></div>
+      <div><dt>FERPA</dt><dd>The federal law that protects student education records, such as grades, ID numbers and advising notes.</dd></div>
+      <div><dt>De-identify</dt><dd>Remove or replace names, ID numbers and other details that point to a person before you use data.</dd></div>
+    </dl>
+  </section>
+
+  <section class="page" data-page="staff-links" data-desc="Official UW pages and the offices to contact" hidden>
+    <h2>Key links &amp; contacts</h2>
+    <div class="links">
+      <div><b>Formal policy</b> <a href="https://it.wisc.edu/ai/generative-ai-uw-madison-use-policies/">Generative AI use &amp; policies</a> · <a href="https://policy.wisc.edu/library/UW-504">Policy UW-504</a> / <a href="https://www.wisconsin.edu/uw-policies/uw-system-administrative-policies/information-security-data-classification-and-protection/">UW System Policy 1031</a> (data classification) · <a href="https://registrar.wisc.edu/ferpa/">FERPA</a> · <a href="https://www.wisconsin.edu/regents/policies/acceptable-use-of-information-technology-resources/">Regent Policy 25-3 (acceptable use)</a> · <a href="https://policy.wisc.edu/library/UW-509">Policy UW-509 (incidents)</a></div>
+      <div><b>Data &amp; tools</b> <a href="https://it.wisc.edu/ai/">Approved AI services</a> · <a href="https://it.wisc.edu/news/ai-at-work-a-practical-guide-to-using-uws-tools-safely/">AI at work: using UW tools safely</a> · <a href="https://it.wisc.edu/learn/data-classification/">Data classification</a></div>
+      <div><b>For students</b> <a href="../ai-guidelines/">CBE Generative AI Guidelines for Students</a></div>
+    </div>
+    <div class="contacts">
+      <h3 class="sub">Who to contact</h3>
+      <div class="cgrid">
+        <div><b><a href="https://it.wisc.edu/help/">DoIT Help Desk</a></b><span>NetID login, access to UW AI tools, is this tool approved? · 608-264-4357</span></div>
+        <div><b><a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/">UW Office of Cybersecurity</a></b><span>Data questions, tool risk reviews · <a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/reporting-an-incident-to-it-security/">report an incident</a> · cybersecurity@cio.wisc.edu</span></div>
+        <div><b><a href="https://registrar.wisc.edu/ferpa/">Office of the Registrar</a></b><span>FERPA and student-record questions</span></div>
+        <div><b><a href="https://rsp.wisc.edu/">Research and Sponsored Programs</a></b><span>Proposals, sponsor documents and confidentiality</span></div>
+        <div><b><a href="https://hr.wisc.edu/">Office of Human Resources</a></b><span>Personnel and employee information</span></div>
+        <div><b><a href="https://engineering.wisc.edu/departments/chemical-biological-engineering/">CBE Department</a></b><span>Department questions · che@che.wisc.edu</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" data-page="staff-quiz" data-desc="10 quick questions to test what you know, with instant feedback" hidden>
+    <h2>Quiz: Check your understanding</h2>
+    <p class="note">Pick an answer to see whether it's right and why. Nothing is recorded, so take it as often as you like.</p>
+    <div class="score" id="score"><span id="score-text">0 of 10 answered · 0 correct</span><button type="button" id="quiz-reset">Start over</button></div>
+    <div class="quiz" id="quiz"></div>
+    <div class="results" id="results" aria-live="polite">
+      <div class="r-head"><b>Your results</b><span>CBE Generative AI Guide for Staff · Check your understanding</span></div>
+      <div class="r-name"><label for="quiz-name">Your name (optional)</label><input id="quiz-name" type="text" autocomplete="off" placeholder="Type your name"></div>
+      <div id="results-body"></div>
+      <p class="r-note">Nothing is recorded or sent anywhere, and your name stays on this page. To keep your result, take a screenshot of this card.</p>
+    </div>
+  </section>
+</div>
+<footer><span>Last updated November 18, 2026</span><span>© Department of Chemical and Biological Engineering, UW–Madison</span></footer>
+</main>
+<script>
+  var VIEWS = ["staff"];
+  function pagesOf(v) { return Array.prototype.slice.call(document.querySelectorAll("#view-" + v + " section.page")); }
+  function titleOf(sec) { return sec.querySelector("h2").childNodes[0].textContent.trim(); }
+  function buildTiles() {
+    VIEWS.forEach(function (v) {
+      var box = document.getElementById("tiles-" + v);
+      pagesOf(v).forEach(function (sec, i) {
+        var a = document.createElement("a");
+        a.className = "tile"; a.href = "#" + sec.dataset.page;
+        var pills = Array.prototype.map.call(sec.querySelectorAll("h2 .pill"), function (p) { return p.outerHTML; }).join("");
+        a.innerHTML = '<span class="tt">' + titleOf(sec) + '</span><span class="td">' +
+          sec.dataset.desc + '</span><span class="tp">' + pills + '</span><span class="go">Open →</span>';
+        box.appendChild(a);
+      });
+      pagesOf(v).forEach(function (sec, i, all) {
+        var label = "For staff";
+        var crumb = document.createElement("div");
+        crumb.className = "crumb";
+        crumb.innerHTML = '<a href="#' + v + '">☰ All topics</a><span>' + label + '</span>';
+        sec.insertBefore(crumb, sec.firstChild);
+        var pager = document.createElement("nav");
+        pager.className = "pager"; pager.setAttribute("aria-label", "Topic navigation");
+        var html = "";
+        if (i > 0) html += '<a class="prev" href="#' + all[i - 1].dataset.page + '"><small>← Previous</small>' + titleOf(all[i - 1]) + '</a>';
+        html += i < all.length - 1
+          ? '<a class="next" href="#' + all[i + 1].dataset.page + '"><small>Next →</small>' + titleOf(all[i + 1]) + '</a>'
+          : '<a class="next" href="#' + v + '"><small>Done</small>Back to all topics</a>';
+        if (i < all.length - 1) html = html.replace(/(<a class="next")/, '<a class="home" href="#' + v + '">☰ All topics</a>$1');
+        pager.innerHTML = html;
+        sec.appendChild(pager);
+      });
+    });
+  }
+  function show() {
+    var h = location.hash.replace("#", "");
+    var v = "staff";
+    var page = h && h !== v ? h : null;
+    VIEWS.forEach(function (k) {
+      document.getElementById("view-" + k).hidden = k !== v;
+    });
+    var found = false;
+    pagesOf(v).forEach(function (sec) { var on = sec.dataset.page === page; sec.hidden = !on; if (on) found = true; });
+    var view = document.getElementById("view-" + v);
+    view.querySelector(".hub").hidden = found;
+    window.scrollTo(0, 0);
+  }
+  buildTiles();
+  window.addEventListener("hashchange", show);
+  show();
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    btn.dataset.label = btn.dataset.label || btn.textContent;
+    var text = document.getElementById(btn.dataset.copy).textContent.replace(/^"|"$/g, "");
+    var done = function (msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = btn.dataset.label || "Copy text"; }, 1800); };
+    try {
+      navigator.clipboard.writeText(text).then(function () { done("Copied"); }, function () { done("Select the text to copy"); });
+    } catch (err) { done("Select the text to copy"); }
+  });
+
+  var QUIZ = [["Which of these can you paste into Microsoft Copilot Chat after signing in with your NetID?", ["A class roster with student ID numbers", "A draft internal procedure for room requests", "A scanned receipt showing a card number", "An employee's leave request"], 1, "UW-approved tools are cleared for public and internal data. Student IDs, card numbers and leave information are sensitive.", "policy"], ["You sign in to a personal Claude account with your NetID. Can you now use it for internal department documents?", ["Yes, a NetID login makes any tool approved", "Only on campus Wi-Fi", "No. The NetID login adds sign-in security only, with no UW data protections", "Yes, for documents under 10 pages"], 2, "Claude is not on the approved list. Use the tools listed at it.wisc.edu/ai for internal work.", "policy"], ["You want AI to help balance advisor loads for next year. What's the best approach?", ["Upload the full advising export with student names", "Use placeholders (Student A, Advisor 1) and fill in real names yourself", "Use a free chatbot so it doesn't touch UW systems", "Paste only the grades column"], 1, "Student records are protected (FERPA). Placeholders let AI help with the logic while the real names stay out.", "best"], ["AI summarizes a travel reimbursement policy into a checklist. What should you do next?", ["Share it right away; AI summaries are accurate", "Compare it with the official policy page before you use it", "Ask the AI if it is sure", "Add a note saying AI wrote it and send it"], 1, "AI can drop or invent rules. Check against the official source before anyone relies on it.", "best"], ["A colleague asks you to try a new AI note-taker they installed for staff meetings that discuss personnel. What do you do?", ["Use it; it saves time", "Use it but delete the notes afterward", "Don't use it for university meetings unless IT confirms it is approved", "Use it only for the first half of the meeting"], 2, "Tools not on the approved list are treated as public, and personnel matters are sensitive.", "policy"], ["Which data is Sensitive or Restricted and must stay out of AI tools?", ["The public course timetable", "A department news story draft", "Students' grades and advising notes", "A room schedule with course numbers only"], 2, "Student education records are sensitive and protected by FERPA.", "policy"], ["AI drafts a compliance check of a proposal and says everything is complete. What is your role?", ["Route it for signature; the check is done", "Review the checklist yourself; you are responsible for what is submitted", "Ask a second AI tool to confirm", "Nothing; compliance is the PI's job"], 1, "AI is an assistant, not autopilot. A person verifies, approves and signs.", "policy"], ["You realize you pasted a spreadsheet with student ID numbers into a free chatbot. What should you do?", ["Nothing; it's too late", "Delete the chat and move on", "Ask the chatbot to forget it", "Stop, tell your supervisor and report it to the Office of Cybersecurity"], 3, "Suspected data incidents must be reported promptly (Policy UW-509).", "policy"], ["Which task is a great first use of AI at work?", ["Deciding which student gets a scholarship", "Turning a long procedure into a one-page checklist", "Approving reimbursements automatically", "Writing a performance review"], 1, "Start with tedious text and document work, where you can easily check the result. Keep people in charge of decisions about people.", "best"], ["AI builds you a dashboard from a budget spreadsheet. Which check matters most?", ["The colors look professional", "The totals match your source spreadsheet", "The charts load quickly", "It has a title"], 1, "AI can make arithmetic mistakes and still sound sure. Check the numbers against the source.", "best"]];
+  var TOPICS = ["What goes into UW tools", "Personal accounts vs. UW tools", "Protecting student records", "Check against the source", "Unapproved add-on tools", "What counts as sensitive", "Who is responsible", "Reporting a data mistake", "Good first uses", "Check the numbers"];
+
+  var PILLS = { policy: '<span class="pill p-policy">UW policy</span>', best: '<span class="pill p-best">Recommended</span>' };
+  var answered = {}, correct = 0, doneAt = null;
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+  function renderResults() {
+    var n = Object.keys(answered).length, body = document.getElementById("results-body");
+    if (n < QUIZ.length) {
+      body.innerHTML = '<p class="r-progress">Answer all ' + QUIZ.length + ' questions to see your full results (' + n + ' of ' + QUIZ.length + ' answered so far).</p>';
+      return;
+    }
+    var pct = Math.round(100 * correct / QUIZ.length);
+    body.innerHTML = '<div class="r-score"><b>' + correct + ' / ' + QUIZ.length + '</b><span>' + pct + '% correct on the first try</span>' +
+      '<span>Completed ' + esc(doneAt.toLocaleString([], {dateStyle: "medium", timeStyle: "short"})) + '</span></div>' +
+      '<div class="r-rows">' + QUIZ.map(function (q, i) {
+        var ok = answered[i] === q[2];
+        return '<div class="r-row"><span class="n">' + (i + 1) + '.</span><span class="t">' + esc(TOPICS[i]) + '</span>' +
+          (ok ? '<span class="r-ok">✓ Correct</span>' : '<span class="r-miss">✗ Missed</span>') + '</div>';
+      }).join("") + '</div>';
+  }
+  function renderQuiz() {
+    answered = {}; correct = 0; doneAt = null;
+    var box = document.getElementById("quiz");
+    box.innerHTML = QUIZ.map(function (q, i) {
+      return '<div class="q" id="q' + i + '"><div class="q-head"><b>' + (i + 1) + '. ' + q[0] + '</b>' + PILLS[q[4]] + '</div><div class="q-opts">' +
+        q[1].map(function (o, j) { return '<button type="button" data-q="' + i + '" data-o="' + j + '">' + o + '</button>'; }).join("") +
+        '</div><p class="q-why" hidden></p></div>';
+    }).join("");
+    updateScore();
+  }
+  function updateScore() {
+    var n = Object.keys(answered).length;
+    document.getElementById("score-text").textContent = n + " of " + QUIZ.length + " answered · " + correct + " correct" +
+      (n === QUIZ.length ? (correct === QUIZ.length ? " · Perfect score!" : " · Review the topics behind the ones you missed.") : "");
+    if (n === QUIZ.length && !doneAt) doneAt = new Date();
+    renderResults();
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-q]");
+    if (b) {
+      var i = +b.dataset.q, j = +b.dataset.o, q = QUIZ[i];
+      if (answered[i] !== undefined) return;
+      answered[i] = j; if (j === q[2]) correct++;
+      var card = document.getElementById("q" + i);
+      card.querySelectorAll("button").forEach(function (x) {
+        x.disabled = true;
+        if (+x.dataset.o === q[2]) x.classList.add("right");
+        else if (x === b) x.classList.add("wrong");
+      });
+      var why = card.querySelector(".q-why");
+      why.innerHTML = (j === q[2] ? "<b>Correct.</b> " : "<b>Not quite.</b> ") + q[3];
+      why.hidden = false;
+      updateScore();
+    }
+    if (e.target.id === "quiz-reset") renderQuiz();
+  });
+  renderQuiz();
+</script>
+</body>
+</html>
