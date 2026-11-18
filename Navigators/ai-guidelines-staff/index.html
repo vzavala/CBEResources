@@ -231,11 +231,12 @@
     <div class="g g-must"><h3>Must <span class="pill p-policy">UW policy</span></h3><ul>
       <li>Keep sensitive data (student records, personal info, IDs, health, personnel matters) out of AI tools</li>
       <li>Use only UW NetID tools for internal work documents</li>
+      <li>Follow your department's AI rules too</li>
       <li>You're responsible for anything you send, sign or submit, including AI mistakes</li>
       <li>Report a possible data exposure right away</li></ul></div>
     <div class="g g-should"><h3>Recommended</h3><ul>
       <li>Check every number, name, date and amount before you use it</li>
-      <li>Remove names and IDs, or use made-up data, when you try something new</li>
+      <li>Remove names and indirect identifiers, or use made-up data, when you try something new</li>
       <li>Start with tedious, repetitive tasks</li>
       <li>Keep a person in charge of decisions, approvals and signatures</li></ul></div>
     <div class="g g-ask"><h3>Ask</h3><ul>
@@ -247,7 +248,7 @@
   <div class="tiles" id="tiles-staff"></div>
   </div>
 
-  <section class="page" data-page="staff-check" data-desc="A 5-step check before you use AI on a work task" hidden>
+  <section class="page" data-page="staff-check" data-desc="A 6-step check before you use AI on a work task" hidden>
     <h2>Can I use AI on this task?</h2>
     <ol class="list">
       <li><b>Look at the data.</b> What would you paste or upload? Find its level in the data table (next topic).</li>
@@ -255,6 +256,7 @@
       <li><b>Internal data</b> (drafts, procedures, schedules, department budgets): use only a UW NetID tool such as Microsoft Copilot Chat or Google Gemini.</li>
       <li><b>Public data</b> (published pages, public course listings): any tool is fine, but a UW tool is still the better habit.</li>
       <li><b>Check before you use it.</b> Verify the output yourself. AI drafts; you decide, approve and sign.</li>
+      <li><b>Check your department's rules.</b> UW employees must also follow their unit's AI rules. Unsure? Ask your supervisor.</li>
     </ol>
     <div class="sample"><b>Quick rule</b><p>If you wouldn't post it on the department website, it goes only into a UW NetID tool. If you wouldn't email it to a colleague in another department, it doesn't go into AI at all.</p></div>
   </section>
@@ -267,7 +269,7 @@
       <tbody>
         <tr><td class="tier">Public</td><td>Department web pages, published news stories, public course listings and timetables, public event announcements, published policies</td><td>Yes, in any tool (still verify the output)</td></tr>
         <tr><td class="tier">Internal</td><td>Draft documents and emails, internal procedures, room and visitor schedules, meeting notes without personal details, department budget summaries, de-identified spreadsheets</td><td>Only in <b>UW-approved tools</b> with NetID login</td></tr>
-        <tr><td class="tier">Sensitive / Restricted</td><td>Student records (grades, ID numbers, advising notes, disability or conduct information), Social Security and bank numbers, card numbers on receipts, health and leave information, personnel and performance matters, passwords, confidential proposals and sponsor documents</td><td><span class="no">No</span>, unless the specific tool and use have passed a UW cybersecurity risk review</td></tr>
+        <tr><td class="tier">Sensitive / Restricted</td><td>Student records (grades, ID numbers, student work, advising notes, disability or conduct information), Wiscard photos and directory data, Social Security and bank numbers, card numbers on receipts, health and leave information, personnel and performance matters, passwords, proposals and papers under confidential review, unpublished intellectual property, export-controlled information</td><td><span class="no">No</span>, even in approved tools, unless a risk assessment has been approved by the Office of Cybersecurity and your unit's risk executive (typically the dean)</td></tr>
       </tbody></table></div>
     <p class="note">Student education records are also protected by federal law (<a href="https://registrar.wisc.edu/ferpa/">FERPA</a>). UW–Madison Policy UW-504 (Data Classification) is retired on Dec 31, 2026. From Jan 1, 2027 campus uses UW System Administrative Policy 1031 and its three tiers (Low / Moderate / High risk). The rule stays the same: protected data stays out of AI tools unless the tool is approved for it.</p>
     <p class="src-link">Official source: <a href="https://it.wisc.edu/generative-ai-services-uw-madison/generative-ai-uw-madison-use-policies/">UW–Madison generative AI use policies</a> · <a href="https://it.wisc.edu/learn/data-classification/">UW data classification</a></p>
@@ -275,14 +277,25 @@
     <div class="tbl"><table>
       <thead><tr><th>Tool</th><th>Status</th><th>Data allowed</th></tr></thead>
       <tbody>
-        <tr><td class="tier">Microsoft Copilot Chat, Google Gemini, Gemini Notebook (NotebookLM), Google Workspace Studio, Zoom AI Companion, Webex AI Assistant</td><td>Authorized, free with NetID</td><td>Public and Internal</td></tr>
+        <tr><td class="tier">Microsoft Copilot Chat, Google Gemini, Gemini Notebook (NotebookLM), Google Workspace Studio</td><td>Authorized, free with NetID</td><td>Public and Internal</td></tr>
+        <tr><td class="tier">Zoom AI Companion, Webex AI Assistant</td><td>Authorized, free with NetID</td><td>Public and Internal; Sensitive and Restricted (Secure Zoom) only after review</td></tr>
+        <tr><td class="tier">Amazon Bedrock, Microsoft Foundry, Gemini Enterprise Agent Platform</td><td>Authorized by subscription, for building AI tools</td><td>Public and Internal; Sensitive and Restricted only after review</td></tr>
         <tr><td class="tier">Microsoft 365 Copilot (premium)</td><td>Authorized with a paid license</td><td>Public and Internal; Sensitive only after a UW review of that use</td></tr>
-        <tr><td class="tier">Free ChatGPT, personal Claude or Gemini accounts, browser plug-ins, AI note-takers you install yourself</td><td><span class="no">Not authorized</span> for university data</td><td>Public only: treat everything you type as a public post</td></tr>
+        <tr><td class="tier">Free ChatGPT, personal Claude or Gemini accounts, browser plug-ins, third-party meeting bots (Otter, Read.ai, Fireflies)</td><td><span class="no">Not authorized</span> for university data</td><td>Public only: treat everything you type as a public post</td></tr>
       </tbody></table></div>
-    <p class="note">The <a href="https://it.wisc.edu/ai/anthropic-claude-sso-netid-login/">NetID login for Claude (Nov 2, 2026)</a> adds sign-in security only: accounts stay personal, UW can't see them, and there are no added UW data protections. Claude is not on the approved list. Current list: <a href="https://it.wisc.edu/ai/">UW–Madison Generative AI services</a>. Not on that list? Treat the tool as public.</p>
+    <p class="note">The <a href="https://it.wisc.edu/ai/anthropic-claude-sso-netid-login/">NetID login for Claude (Nov 2, 2026)</a> adds sign-in security only: accounts stay personal, UW can't see them, and there are no added UW data protections. Claude is not on the approved list. Current list: <a href="https://it.wisc.edu/ai/">UW–Madison Generative AI services</a>. Not on that list? Treat the tool as public. For student data, see the Registrar's <a href="https://registrar.wisc.edu/ferpa-approved-productivity-tools/">guide to FERPA-approved tools</a>.</p>
+    <h3 class="sub">Other uses UW policy prohibits</h3>
+    <ul class="list">
+      <li>Uploading files you are not authorized to access (UW-870)</li>
+      <li>Uploading aerial photos or scaled drawings of campus areas, or utilities data (UW-6060)</li>
+      <li>Using AI-written code in UW systems without a person reviewing it first (UW-503)</li>
+      <li>Entering copyrighted material, or generating content that infringes copyright, harasses or breaks laws or contracts (Regent Policy 25-3)</li>
+    </ul>
     <h3 class="sub">Formal documents behind these rules</h3>
     <ul class="list refs">
       <li><a href="https://it.wisc.edu/ai/generative-ai-uw-madison-use-policies/">Generative AI @ UW–Madison: use &amp; policies</a> (UW–Madison Information Technology, version 3)</li>
+      <li><a href="https://policy.wisc.edu/library/UW-523">UW–Madison Policy UW-523: Institutional Data</a></li>
+      <li><a href="https://it.wisc.edu/ai/statement-on-use-of-generative-ai/">CISO statement on use of generative AI</a></li>
       <li><a href="https://policy.wisc.edu/library/UW-504">UW–Madison Policy UW-504: Data Classification</a> (in effect through Dec 31, 2026) and <a href="https://www.wisconsin.edu/uw-policies/uw-system-administrative-policies/information-security-data-classification-and-protection/">UW System Administrative Policy 1031: Data Classification and Protection</a> (from Jan 1, 2027)</li>
       <li><a href="https://registrar.wisc.edu/ferpa/">FERPA at UW–Madison</a>: privacy of student education records</li>
       <li><a href="https://www.wisconsin.edu/regents/policies/acceptable-use-of-information-technology-resources/">Regent Policy Document 25-3: Acceptable Use of Information Technology Resources</a></li>
@@ -304,7 +317,7 @@
     <h3 class="sub">How to get help anyway <span class="pill p-best">Recommended</span></h3>
     <div class="two">
       <div class="ok"><h4>Do</h4><ul>
-        <li>Replace names and IDs with placeholders (Student A, Account 1) before you paste</li>
+        <li>Remove names, IDs <b>and</b> indirect identifiers (rare roles, dates, small groups), then use placeholders (Student A, Account 1). Data that seems anonymous can still identify a person.</li>
         <li>Build the tool or template with made-up data, then fill in the real data yourself, outside AI</li>
         <li>Ask AI about the structure: "Write a formula that totals column C by category"</li>
         <li>Use aggregates instead of rows: totals by category, not lines by person</li>
@@ -314,7 +327,8 @@
         <li>Paste a salary, payroll or reimbursement spreadsheet with names</li>
         <li>Upload receipts that show card numbers or home addresses</li>
         <li>Ask AI to draft a personnel or student-conduct decision</li>
-        <li>Assume a NetID login makes a personal account safe</li></ul></div>
+        <li>Assume a NetID login makes a personal account safe</li>
+        <li>Paste sensitive data into an approved tool without an approved risk assessment</li></ul></div>
     </div>
     <h3 class="sub">Budgets</h3>
     <ul class="list">
@@ -392,6 +406,8 @@
       <tbody>
         <tr><td>You're not sure whether data is sensitive</td><td>Treat it as sensitive and ask your supervisor, or the <a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/">Office of Cybersecurity</a>.</td></tr>
         <tr><td>You're not sure a tool is approved</td><td>Check <a href="https://it.wisc.edu/ai/">it.wisc.edu/ai</a>. If it isn't listed, treat it as public. Questions: <a href="https://it.wisc.edu/help/">DoIT Help Desk</a>, 608-264-4357.</td></tr>
+        <tr><td>A third-party AI bot (Otter, Read.ai, Fireflies) joins your meeting</td><td>Remove it, and use Zoom or Webex AI instead. See <a href="https://kb.wisc.edu/zoom/news.php?id=13451">how to protect meetings from AI bots</a>.</td></tr>
+        <tr><td>You need AI for sensitive or restricted data</td><td>Request a <a href="https://go.wisc.edu/g64qyl">Cybersecurity review</a>; it also needs your unit's risk executive (typically the dean).</td></tr>
         <tr><td>A vendor or app turns on a new AI feature</td><td>Don't use it with university data until you've checked with IT that it is approved.</td></tr>
         <tr><td>You want AI to help with a recurring team process</td><td>Talk with your supervisor first; agree on what data goes in and who checks the results.</td></tr>
         <tr><td>You may have entered sensitive data into an AI tool</td><td>Stop, and tell your supervisor. Suspected data incidents must be reported: <a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/reporting-an-incident-to-it-security/">report it to the UW Office of Cybersecurity</a> (urgent: DoIT Help Desk, 608-264-4357, option 3).</td></tr>
@@ -428,7 +444,7 @@
     <h2>Key links &amp; contacts</h2>
     <div class="links">
       <div><b>Formal policy</b> <a href="https://it.wisc.edu/ai/generative-ai-uw-madison-use-policies/">Generative AI use &amp; policies</a> · <a href="https://policy.wisc.edu/library/UW-504">Policy UW-504</a> / <a href="https://www.wisconsin.edu/uw-policies/uw-system-administrative-policies/information-security-data-classification-and-protection/">UW System Policy 1031</a> (data classification) · <a href="https://registrar.wisc.edu/ferpa/">FERPA</a> · <a href="https://www.wisconsin.edu/regents/policies/acceptable-use-of-information-technology-resources/">Regent Policy 25-3 (acceptable use)</a> · <a href="https://policy.wisc.edu/library/UW-509">Policy UW-509 (incidents)</a></div>
-      <div><b>Data &amp; tools</b> <a href="https://it.wisc.edu/ai/">Approved AI services</a> · <a href="https://it.wisc.edu/news/ai-at-work-a-practical-guide-to-using-uws-tools-safely/">AI at work: using UW tools safely</a> · <a href="https://it.wisc.edu/learn/data-classification/">Data classification</a></div>
+      <div><b>Data &amp; tools</b> <a href="https://it.wisc.edu/ai/">Approved AI services</a> · <a href="https://it.wisc.edu/learn/ai-at-work/">UW guide for employees</a> · <a href="https://registrar.wisc.edu/ferpa-approved-productivity-tools/">FERPA-approved tools</a> · <a href="https://hr.wisc.edu/docs/hr-guidance/ai/guidance-for-ai-use-in-hr.pdf">Guide for HR professionals (PDF)</a> · <a href="https://data.wisc.edu/data-governance/data-stewards/">Data stewards</a> · <a href="https://it.wisc.edu/news/ai-at-work-a-practical-guide-to-using-uws-tools-safely/">AI at work: using UW tools safely</a> · <a href="https://it.wisc.edu/learn/data-classification/">Data classification</a></div>
       <div><b>For students</b> <a href="../ai-guidelines/">CBE Generative AI Guidelines for Students</a></div>
     </div>
     <div class="contacts">
@@ -436,6 +452,8 @@
       <div class="cgrid">
         <div><b><a href="https://it.wisc.edu/help/">DoIT Help Desk</a></b><span>NetID login, access to UW AI tools, is this tool approved? · 608-264-4357</span></div>
         <div><b><a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/">UW Office of Cybersecurity</a></b><span>Data questions, tool risk reviews · <a href="https://it.wisc.edu/about/division-of-information-technology/enterprise-information-security-services/office-of-cybersecurity/reporting-an-incident-to-it-security/">report an incident</a> · cybersecurity@cio.wisc.edu</span></div>
+        <div><b><a href="https://it.wisc.edu/ai/">Administrative AI Exchange</a></b><span>Campus community where administrative staff share how they use AI (join from it.wisc.edu/ai)</span></div>
+        <div><b><a href="https://data.wisc.edu/data-governance/data-stewards/">Data stewards</a></b><span>Is this data sensitive? Ask the steward for that data</span></div>
         <div><b><a href="https://registrar.wisc.edu/ferpa/">Office of the Registrar</a></b><span>FERPA and student-record questions</span></div>
         <div><b><a href="https://rsp.wisc.edu/">Research and Sponsored Programs</a></b><span>Proposals, sponsor documents and confidentiality</span></div>
         <div><b><a href="https://hr.wisc.edu/">Office of Human Resources</a></b><span>Personnel and employee information</span></div>
