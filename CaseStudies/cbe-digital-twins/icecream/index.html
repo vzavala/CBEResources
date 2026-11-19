@@ -443,7 +443,7 @@ body.popped .pop-bar { cursor: move; }
 .res-areas span { font: 600 11.5px var(--font-display); padding: 1px 8px; border-radius: 99px; background: var(--chip); color: var(--ink-2); }
 .res-card .res-go { margin-top: auto; align-self: flex-start; font-size: 12px; padding: 3px 9px; }
 @media (max-width: 860px) { .res-grid { grid-template-columns: minmax(0, 1fr); } }
-.copy { margin: 0; text-align: center; font-size: 11px; line-height: 1.2; color: var(--ink-2); }
+.copy { margin: 0; text-align: center; font-size: 11px; line-height: 1.2; color: var(--ink-2); white-space: normal; overflow: visible; text-overflow: clip; text-wrap: balance; max-width: 100%; }
 footer:has(.copy) { gap: 4px; padding-block-end: calc(4px + env(safe-area-inset-bottom, 0px)); }
 /* Part R: live time trends in a full-width strip above the transport controls */
 .trend-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 14px; }
@@ -784,13 +784,28 @@ aside, footer, .lenses { background: var(--panel-2); }
             <div class="takeaway" id="tk-nh3"></div>
 </details>
     </section>
+    <section id="secWhey">
+      <details class="fold"><summary><h2>Acid whey → syrup <span class="hint">side-stream reactor</span></h2></summary>
+      <p class="pnote">A side stream splits the lactose in acid whey into a sweet syrup for the mix.</p>
+      <div class="seen"><span>Seen in</span><a class="course" href="https://guide.wisc.edu/search/?P=CBE%20430" target="_blank" rel="noopener" title="CBE 430: Chemical Kinetics and Reactor Design">Kinetics &amp; Reactors ↗</a><a class="course" href="https://guide.wisc.edu/search/?P=CBE%20250" target="_blank" rel="noopener" title="CBE 250: Process Synthesis">Balances ↗</a><a class="course" href="https://guide.wisc.edu/search/?P=CBE%20450" target="_blank" rel="noopener" title="CBE 450: Process Design">Design ↗</a></div>
+      <div class="grid2">
+        <div class="field"><label for="Twh">Reactor temperature</label><output id="TwhO"></output><input type="range" id="Twh" min="100" max="160" step="5"></div>
+        <div class="field"><label for="Fwh">Filtrate feed</label><output id="FwhO"></output><input type="range" id="Fwh" min="6" max="40" step="1"></div>
+      </div>
+      <div class="chart"><canvas id="cWhey" height="150"></canvas></div>
+      <div class="leg" id="wheyLeg"></div>
+      <dl class="kv" id="wheyKV"></dl>
+      <div class="takeaway" id="tk-whey"></div>
+      <p class="pnote" id="wheyNote"></p>
+</details>
+    </section>
     <section>
       <h2>Course connections</h2>
       <p class="pnote" id="crsSummary"></p>
       <div class="row"><button class="btn cta" id="btnCrs">Open course map</button></div>
     </section>
     <section id="secRefs">
-      <details class="fold" id="refsFold"><summary><h2>References <span class="hint">21 sources</span></h2></summary>
+      <details class="fold" id="refsFold"><summary><h2>References <span class="hint">28 sources</span></h2></summary>
       <p class="pnote">Superscripts point here; links open in a new tab.</p>
       <ol class="refs" id="refList"></ol>
       </details>
@@ -839,6 +854,7 @@ aside, footer, .lenses { background: var(--panel-2); }
       <button class="btn" data-view="freezer" aria-pressed="false">Freezer</button>
       <button class="btn" data-view="hardening" aria-pressed="false">Hardening</button>
       <button class="btn" data-view="refrig" aria-pressed="false">Ammonia</button>
+      <button class="btn" data-view="whey" aria-pressed="false">Whey reactor</button>
     </div>
   </div>
   <p class="copy">© Victor M. Zavala, Department of Chemical and Biological Engineering, UW–Madison, 2026</p>
@@ -861,7 +877,7 @@ import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { DEFAULTS, PS_BASE, PRESETS, PLANT, PACKAGES, TG_PRIME, LM, PS_SETUPS, computeAll, freezer, nh3, nh3Cycle, recipe, perGallon, INGREDIENTS, EVERYDAY, GAL } from "./models.js";
+import { DEFAULTS, PS_BASE, PRESETS, PLANT, PACKAGES, TG_PRIME, LM, PS_SETUPS, computeAll, freezer, nh3, nh3Cycle, recipe, perGallon, INGREDIENTS, EVERYDAY, GAL, whey } from "./models.js";
 import { buildWorld, cartonPos, roomFrac } from "./world.js";
 import { STOPS as TOUR_STOPS, DetailViewer, COURSE_MAP, COURSES, tag as courseTag, seen, courseURL, tcol } from "./tour.js";
 import { MicroViewer } from "./micro.js";
@@ -922,7 +938,7 @@ composer.addPass(smaa); composer.addPass(new OutputPass());
 const p = { ...DEFAULTS };
 let R = computeAll(p), curPreset = "badger";
 const SLIDERS = { fat: [v => f1(v) + " %"], msnf: [v => f2(v) + " %"], sugar: [v => f1(v) + " %"], cocoa: [v => f2(v) + " %"], stab: [v => f2(v) + " %"], Tpast: [v => f1(v) + " °C"], tHold: [v => v + " s"],
-  Phom: [v => f1(v) + " MPa"], tAge: [v => f1(v) + " h"], overrun: [v => v + " %"], Tdraw: [v => f1(v) + " °C"], Thard: [v => v + " °C"], Tstore: [v => v + " °C"] };
+  Phom: [v => f1(v) + " MPa"], tAge: [v => f1(v) + " h"], overrun: [v => v + " %"], Tdraw: [v => f1(v) + " °C"], Thard: [v => v + " °C"], Tstore: [v => v + " °C"], Twh: [v => v + " °C"], Fwh: [v => v + " L/h"] };
 function syncSliders() { for (const k in SLIDERS) { $(k).value = p[k]; $(k + "O").textContent = SLIDERS[k][0](p[k]); } }
 let recomputeT = null;
 function recompute() { R = computeAll(p); buildCtlTable(); ctl.integ = 0; refreshUI(true); if (micro.open) micro.build(R); if (tour.on) tourLive(); lensLive(); modelLive(); clearTimeout(caseT); caseT = setTimeout(renderCase, 250); }
@@ -1032,13 +1048,14 @@ function labelText(key) {
     case "mroom": return [`<b>NH₃ plant</b>${f0(R.energy.Wcomp)} kW · COP ${f2(R.energy.COP)}`, ""];
     case "condenser": return [`<b>Condensers</b>${f0(R.energy.Qcond)} kW rejected`, "hot"];
     case "cip": return [`<b>CIP</b>caustic 75 °C`, ""];
+    case "whey": return [`<b>Whey reactor</b>${f0(p.Twh)} °C · ${f0(R.wh.X * 100)} % split · ${f0(R.wh.syrupLD)} L/day syrup`, "hot"];
   }
   return [key, ""];
 }
 function placeLabels() {
   const r = stage.getBoundingClientRect(), P = new THREE.Vector3(), dist = camera.position.distanceTo(controls.target);
   for (const l of labelEls) {
-    P.copy(l.pos).project(camera); const vis = P.z < 1 && Math.abs(P.x) < 1.1 && Math.abs(P.y) < 1.1 && !(dist > 120 && ["feeder", "homog", "condenser", "cip", "ageing", "filler", "batching", "deck"].includes(l.key)) && l.pos.distanceTo(controls.target) < Math.max(45, dist * 1.3);
+    P.copy(l.pos).project(camera); const vis = P.z < 1 && Math.abs(P.x) < 1.1 && Math.abs(P.y) < 1.1 && !(dist > 120 && ["feeder", "homog", "condenser", "cip", "ageing", "filler", "batching", "deck", "whey"].includes(l.key)) && l.pos.distanceTo(controls.target) < Math.max(45, dist * 1.3);
     l.el.style.display = vis ? "" : "none"; if (vis) l.el.style.transform = `translate(${(P.x * 0.5 + 0.5) * r.width}px, ${(-P.y * 0.5 + 0.5) * r.height}px) translate(-50%, -100%)`;
   }
 }
@@ -1052,6 +1069,7 @@ const VIEWS = {
   freezer: { pos: [40, 6.5, 8], tgt: [48, 1.2, -3], tag: "Freezing and filling: continuous freezer, feeder, pint and tub filling" },
   hardening: { pos: [50, 15, 22], tgt: [65, 1.5, -2], tag: "Deep freezer (−20 °F) and the Dairy Store" },
   refrig: { pos: [22, 17, -52], tgt: [36, 1.5, -27], tag: "Ammonia machine room and evaporative condenser (assumed)" },
+  whey: { pos: [-9.5, 6.5, 12.5], tgt: [-14.5, 1.2, 2.2], tag: "Acid whey → syrup: membranes, lactose-hydrolysis reactor, syrup back to the mix" },
 };
 let tween = null, curView = "overview";
 function setView(v, instant = false) {
@@ -1259,6 +1277,13 @@ const REF = [
   ["University of Wisconsin–Madison", "Guide: Chemical and Biological Engineering (CBE) courses", "guide.wisc.edu", 2026, "https://guide.wisc.edu/courses/cbe/", "course numbers and titles for the course links"],
   ["US Environmental Protection Agency", "Substitutes in Industrial Process Refrigeration (SNAP program)", "US EPA", 2024, "https://www.epa.gov/snap/substitutes-industrial-process-refrigeration", "ammonia: ozone depletion 0, global warming potential 0, safety class B2 (toxic)"],
   ["NIST Chemistry WebBook", "Water: gas- and condensed-phase thermochemistry (ΔfH° gas −241.826, liquid −285.830 kJ/mol)", "National Institute of Standards and Technology", 2023, "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=7", "enthalpy of vaporisation of water at 25 °C (evaporative condenser)"],
+  ["Chang, H., Stamoulis, A. G., Huber, G. W., and Dumesic, J. A.", "Design of supported organocatalysts from a biomass-derived difuran compound and catalytic assessment for lactose hydrolysis", "Green Chemistry 25, 1809–1822", 2023, "https://doi.org/10.1039/D2GC04243F", "lactose hydrolysis rate constant per proton measured with sulfuric acid, 0.95 L/(mol h) at 100 °C; activation energy 107 kJ/mol (organocatalyst)"],
+  ["Lindsay, M. J., Huang, K., Buchinger, B. A., Maravelias, C. T., Dumesic, J. A., Rankin, S. A., and Huber, G. W.", "Catalytic production of glucose–galactose syrup from Greek yogurt acid whey in a continuous-flow reactor", "ChemSusChem 13, 791–802", 2020, "https://doi.org/10.1002/cssc.201902847", "solid acid catalyst in a packed bed; poisoning by milk minerals; regeneration"],
+  ["Lindsay, M. J., Walker, T. W., Dumesic, J. A., Rankin, S. A., and Huber, G. W.", "Production of monosaccharides and whey protein from acid whey waste streams in the dairy industry", "Green Chemistry 20, 1824–1834", 2018, "https://doi.org/10.1039/C8GC00517F", "acid-catalysed lactose hydrolysis kinetics; filtration of acid whey before the reactor"],
+  ["Lindsay, M. J., Molitor, M. S., Goculdas, T. B., et al., Rankin, S. A., Dumesic, J. A., and Huber, G. W.", "Production of glucose–galactose syrup and milk minerals from Greek yogurt acid whey", "Green Chemistry 24, 8538–8551", 2022, "https://doi.org/10.1039/D2GC02453E", "process: filtration, hydrolysis, evaporation; syrup and milk-mineral (calcium) co-products; techno-economics and life cycle"],
+  ["Wang, W., Dziedzic, O., Lesnjak, C., et al., Featherman, J., Rankin, S. A., and Huber, G. W.", "The kinetics of aqueous lactose hydrolysis with sulfuric acid", "Reaction Chemistry & Engineering 10, 1676–1691", 2025, "https://doi.org/10.1039/D5RE00175G", "sulfuric-acid catalysis and HMF by-products (cited for context; parameters not used)"],
+  ["Lindsay, M. J.", "The production of multiple high-value products from Greek yogurt acid whey via filtration and acid-catalyzed lactose hydrolysis (conference slides)", "UW–Madison Food Science, archived copy", 2021, "https://web.archive.org/web/2024/https://foodsci.wisc.edu/wp-content/uploads/2023/08/FDC_2021_Lindsay.pdf", "slides, a weaker source than the papers: 2–3 kg acid whey per kg Greek yogurt; 90 % conversion and 99 % selectivity in the lab reactor; relative sweetness; 54.6 t/day syrup per 1000 t/day acid whey; syrup tried in soft-serve ice cream"],
+  ["UW–Madison Dairy Innovation Hub", "Towards net-zero dairy: designing and operating a novel catalytic reactor for valorization of acid whey (project page)", "University of Wisconsin–Madison", 2024, "https://dairyinnovationhub.wisc.edu/projects/rankin-s-towards-net-zero-dairy-designing-and-operating-a-novel-catalytic-reactor-for-valorization-of-acid-whey", "pilot-scale lactose reactor in the renovated Babcock Hall dairy plant, ≈ 100 L/day of glucose–galactose syrup"],
 ];
 const rf = (...ns) => ns.length ? `<sup class="refsup">[${ns.map(n => `<a class="ref" href="#ref-${n}" data-ref="${n}" title="${REF[n - 1][1]}">${n}</a>`).join(",")}]</sup>` : "";
 function renderRefs() {
@@ -1270,13 +1295,13 @@ renderRefs();
 $("tRefB").innerHTML = rf(16, 17, 18);
 const LREF = {
   "CBE 250": [[1, 6], [1], [16, 5]], "CBE 310": [[15], [3], [15]], "CBE 311": [[7, 8, 1], [15]], "CBE 320": [[9], [1], [3]],
-  "CBE 326": [[1, 3], [1], [3]], "CBE 426": [[]], "CBE 430": [[3, 4], [10, 1], [12, 13]], "CBE 450": [[1], [15], [5]],
+  "CBE 326": [[1, 3], [1], [3]], "CBE 426": [[]], "CBE 430": [[3, 4], [10, 1], [12, 13], [22, 23, 28]], "CBE 450": [[1], [15], [5]],
   "CBE 470": [[], [4]], "CBE 540": [[12, 1], [1]], "CBE 547": [[3, 14], [2], [2]], "CBE 560": [[3, 4]], "FOOD SCI 511": [[2, 1]],
 };
 
 // ---------- learn by subject: guided lenses ----------
 // Each stop: camera [pos, target], marker position, side-panel index to outline, optional mode, text, equation, live values.
-const SEC = () => [...document.querySelectorAll("aside > section:not(.case)")];   // 0 line, 1 gallon, 2 formulation, 3 process, 4 quality, 5 ice, 6 HTST, 7 hardening, 8 control, 9 NH3, 10 courses
+const SEC = () => [...document.querySelectorAll("aside > section:not(.case)")];   // 0 line, 1 gallon, 2 formulation, 3 process, 4 quality, 5 ice, 6 HTST, 7 hardening, 8 control, 9 NH3, 10 whey reactor, 11 courses
 const it = v => `<i>${v}</i>`;
 const XS = () => W.X;
 const LENSES = {
@@ -1382,7 +1407,11 @@ const LENSES = {
       t: "Over weeks, small ice crystals shrink and big ones grow, so old ice cream feels crunchy. Keeping it colder slows this a lot. Temperature swings, like opening the freezer door, speed it up.",
       plain: "Crystals grow faster the warmer the storage.",
       eq: `${it("L")}³ − ${it("L")}<sub>0</sub>³ = ${it("k")}(${it("T")})·${it("t")}`,
-      live: () => [["Storage", `${p.Tstore} °C`], ["Ice crystal size after 4 weeks", `${f0(R.q.Lstore)} µm (gritty above ≈ 50)`]] },
+      live: () => [["Storage", `${p.Tstore} °C`], ["Ice crystal size after 4 weeks", `${f0(R.q.Lstore)} µm (gritty above ≈ 50)`]] },    { h: "Turning waste into sweetener", cam: [[-9, 4.5, 9.5], [-14, 1.3, 2.2]], mark: [-14, 2.6, 2.2], sec: 10,
+      t: "Making Greek yogurt leaves 2 to 3 kg of sour acid whey for every kg of yogurt, and it is full of lactose (milk sugar). A side reactor, like the pilot-scale one developed at UW–Madison, uses a little acid and heat to split each lactose molecule into glucose and galactose. The syrup is about four times sweeter and can go back into the ice cream mix.",
+      plain: "Hotter, or longer in the reactor, splits more lactose, until almost none is left.",
+      eq: `${it("X")} = 1 − exp(−${it("k")}τ)`,
+      live: () => [["Reactor", `${f0(p.Twh)} °C, ${f0(R.wh.tau * 60)} min inside`], ["Lactose split", `${f0(R.wh.X * 100)} %`], ["Syrup made", `${f0(R.wh.syrupLD)} L/day`]] },
   ],
   "CBE 450": [
     { h: "What a gallon costs to make", cam: [[48, 3.5, 4], [51, 1.2, -1]], mark: [51, 1.6, -2], sec: 1,
@@ -1490,6 +1519,7 @@ const SPOTS = [
   ["Condenser", [46, 5.6, -27], "CBE 426", 0],
   ["Cleaning system", [15, 2.8, 2.5], "CBE 326", 2],
   ["Dairy store", [63, 2.3, 9.2], "FOOD SCI 511", 0],
+  ["Whey reactor", [-14, 2.7, 2.2], "CBE 430", 3],
 ];
 $("spots").innerHTML = SPOTS.map(([nm, , c], i) => `<button class="spot" data-i="${i}" aria-label="ChemE spot ${i + 1}: ${nm}. Opens the ${COURSES[c][2]} lens."><b>${i + 1}</b><span>${nm} · ${COURSES[c][2]}</span></button>`).join("");
 const spotEls = [...$("spots").children], spotV = SPOTS.map(s => new THREE.Vector3(...s[1]));
@@ -1502,7 +1532,7 @@ function markSpotList() { $("spotList").querySelectorAll(".sl-row").forEach(b =>
 function setSpotList(open) { $("spotList").classList.toggle("collapsed", !open); $("slTog").textContent = open ? "‹" : "›"; $("slTog").setAttribute("aria-expanded", String(open)); }
 $("slTog").onclick = () => setSpotList($("spotList").classList.contains("collapsed"));
 setSpotList(!matchMedia("(max-width: 860px)").matches);
-const AREAS = [["Milk intake", [-30.5, 7.5, 2]], ["Mix & pasteurise", [8, 6.5, -12]], ["Ageing tanks", [30.5, 9, -11]], ["Freezer & filling", [47, 5.5, 1]], ["Hardening room", [65.2, 8.5, -11]], ["Ammonia plant", [34, 7, -31]], ["Dairy store", [63, 5, 11]]];
+const AREAS = [["Milk intake", [-30.5, 7.5, 2]], ["Mix & pasteurise", [8, 6.5, -12]], ["Ageing tanks", [30.5, 9, -11]], ["Freezer & filling", [47, 5.5, 1]], ["Hardening room", [65.2, 8.5, -11]], ["Ammonia plant", [34, 7, -31]], ["Dairy store", [63, 5, 11]], ["Acid whey → syrup", [-15, 5, 3.5]]];
 $("areas").innerHTML = AREAS.map(([n]) => `<div class="area">${n}</div>`).join("");
 const areaEls = [...$("areas").children], areaV = AREAS.map(a => new THREE.Vector3(...a[1]));
 
@@ -1538,6 +1568,7 @@ function renderRW() {
       <li><b>Energy:</b> ${f0(e.Wcomp)} kW of compressors, ${f2(g.kWhE)} kWh per gallon.</li>
       <li><b>Trade-off:</b> ammonia is climate-safe but toxic${rf(20)}.</li>
       <li><b>Cost:</b> ≈ $${f2(g.costGal)} per gallon (Typical prices).</li>
+      <li><b>Waste to sweetener:</b> a side reactor turns acid whey into syrup for the mix.</li>
       <li><b>Same steps:</b> milk, juice, vaccines, the cold chain.</li>
     </ul>
     <div><b>ChemE jobs:</b> process, product, quality, energy and automation engineers.</div>`;
@@ -1620,6 +1651,7 @@ const GO = {
   micro: () => setMicro(true),
   quality: () => openPanel(4),
   cost: () => openPanel(1),
+  whey: () => { setView("whey"); openPanel(10); },
 };
 const CRS_LIST = Object.keys(COURSE_USE).sort((a, b) => COURSE_DB.courses[a].order - COURSE_DB.courses[b].order || a.localeCompare(b));
 const featById = Object.fromEntries(CRS_FEATURES.map(f => [f.id, f]));
@@ -1718,7 +1750,7 @@ addEventListener("keydown", e => { if (e.key === "Escape" && modelOpen) toggleMo
 // subject-lens equation boxes use the same numbered equations
 const LTEX = { "CBE 326": { 2: String.raw`\dfrac{1}{U(t)} = \dfrac{1}{U_0} + R_{\mathrm{fouling}}(t)` }, "CBE 470": { 1: String.raw`T_{\mathrm{hold}} < T_{\mathrm{legal}} \;\Rightarrow\; \text{divert the flow}` } };
 const LEQ = { "CBE 250": ["recipe", "freezerQ", "overrun"], "CBE 310": ["cycle", "homogT", "cycle"], "CBE 311": ["ice", "antoine"], "CBE 320": ["pen", "harden", "tube"],
-  "CBE 326": ["hx", "harden", null], "CBE 426": ["evap"], "CBE 430": ["lethal", "avrami", "ripen"], "CBE 450": ["cost", "cycle", "overrun"], "CBE 470": ["pi", null],
+  "CBE 326": ["hx", "harden", null], "CBE 426": ["evap"], "CBE 430": ["lethal", "avrami", "ripen", "whpfr"], "CBE 450": ["cost", "cycle", "overrun"], "CBE 470": ["pi", null],
   "CBE 540": ["ripen", "visc"], "CBE 547": ["drop", "air", "overrun"], "CBE 560": ["lethal"], "FOOD SCI 511": ["trend"] };
 
 
@@ -1796,7 +1828,16 @@ function renderTakeaways() {
   renderTkCtl();
   const fz = R.loads[0], cs = R.loads[2], wkg = e.Qcond / E.hvap25 * 3600;
   TK("tk-nh3", `<b>1 kWh of electricity removes ${f1(e.COP)} kWh of heat</b>: ${f1(fz.cyc.COP)} at the freezer, ${f1(cs.cyc.COP)} at the ${mn(p.Tstore)} °C store. Condensers evaporate ≈ ${f0(wkg)} kg of water an hour.`);
+  renderWhey();
   TK("tk-case", `<b>More water, more to freeze:</b> ${f0(z.m * R.c.water / 100 * z.iceOfWater * 333.6 / z.Qprod * 100)} % of the freezer's work freezes your recipe's ${f0(R.c.water)} % water. Sugar or fat cut it, at a cost in softness, melting or price.`);
+}
+function renderWhey() {
+  const x = R.wh, sugH = R.fz.m * 3600 * p.sugar / 100, hrs = x.solidsKgD / (0.25 * sugH);
+  $("wheyKV").innerHTML = `<dt>Residence time</dt><dd>${f0(x.tau * 60)} min</dd><dt>Rate constant at ${f0(x.T)} °C</dt><dd>${f2(x.k)} per hour</dd>
+    <dt>Lactose split into glucose + galactose</dt><dd class="big">${f0(x.X * 100)} %</dd><dt>Syrup made (70 % sugars)</dt><dd class="big">${f0(x.syrupLD)} L/day</dd>
+    <dt>Sweetness vs lactose</dt><dd>${f1(x.sweetX)}×</dd><dt>Acid whey kept out of disposal</dt><dd>${f1(x.gawKgD / 1000)} t/day</dd><dt>Greek yogurt that whey comes from</dt><dd>≈ ${f1(x.yogKgD / 1000)} t/day</dd>`;
+  TK("tk-whey", `<b>Waste to sweetener:</b> ${f0(x.X * 100)} % of the lactose is split, so the syrup is ${f1(x.sweetX)}× as sweet as the lactose it came from. A day's syrup could replace a quarter of the sucrose in this line's mix for about ${hrs < 10 ? f1(hrs) : f0(hrs)} hours of freezing${x.X < 0.8 ? ". Raise the temperature or slow the feed to split more" : ""}. Hotter is faster, but by-products such as HMF also rise (not modelled).`);
+  $("wheyNote").innerHTML = `Like the pilot-scale reactor developed at UW–Madison to make glucose–galactose syrup from acid whey${rf(28, 23, 25)}; this is not a model of that unit. Kinetics from published measurements${rf(22)}; reactor size, acid level and syrup strength are illustrative.`;
 }
 function renderTkCtl() {
   const dev = ctl.Tdraw - p.Tdraw, dTe = ctl.Te - R.fz.Tevap;
@@ -1807,7 +1848,7 @@ function renderTkCtl() {
 
 // ---------- Links to Research (TwinKit Part N, updates 3–4): rows from TwinKit/research.json byTwin["icecream"] only ----------
 const CENTERS = [{"name": "Center for Dairy Research", "url": "https://www.cdr.wisc.edu/", "where": "dairy processing research and training"}, {"name": "Dairy Innovation Hub", "url": "https://dairyinnovationhub.wisc.edu/", "where": "dairy research and innovation"}];   // Part T: TwinKit/centers.json byTwin["icecream"] only
-const RESEARCH = [{"name": "Rose Cersonsky", "page": "https://engineering.wisc.edu/directory/profile/rose-cersonsky/", "where": "ice crystal formation in the freezer", "areas": ["Molecular modeling and simulation", "Applied mathematics and machine learning", "Self-assembly of complex building blocks"], "jump": ["Freezer barrel", "spot", 6]}, {"name": "Quentin Dudley", "page": "https://engineering.wisc.edu/directory/profile/quentin-dudley/", "where": "plant-made flavors and ingredients", "areas": ["Plant synthetic biology", "Metabolic engineering", "Cell-free systems"], "jump": ["Mixing the recipe", "spot", 1]}, {"name": "Matt Gebbie", "page": "https://engineering.wisc.edu/directory/profile/matt-gebbie/", "where": "colloids and interfaces in the frozen foam", "areas": ["Electrochemistry", "Colloid and interface science", "Ionic liquids and electrolytes"], "jump": ["Microstructure", "go", "micro"]}, {"name": "Dan Klingenberg", "page": "https://engineering.wisc.edu/directory/profile/dan-klingenberg/", "where": "flow of the mix as a complex fluid and suspension", "areas": ["Colloid science", "Complex fluids", "Suspension rheology"], "jump": ["Holding tube", "spot", 4]}, {"name": "David Lynn", "page": "https://engineering.wisc.edu/directory/profile/david-lynn/", "where": "interfaces in emulsions and foams", "areas": ["Polymers and soft materials", "Surfaces and interfaces", "Biomaterials and biotechnology"], "jump": ["Homogeniser", "spot", 2]}, {"name": "Eric Shusta", "page": "https://engineering.wisc.edu/directory/profile/eric-shusta/", "where": "brain freeze: how cold reaches the brain", "areas": ["Brain drug delivery", "Blood-brain barrier modeling", "Biopharmaceutical design"], "jump": ["Dairy store", "spot", 13]}, {"name": "Ross Swaney", "page": "https://engineering.wisc.edu/directory/profile/ross-swaney/", "where": "process design of the plant", "areas": ["Process systems design, modeling and optimization", "Process modeling with guaranteed convergence", "Flowsheet synthesis of separation processes"], "jump": ["Whole plant", "view", "overview"]}, {"name": "John Yin", "page": "https://engineering.wisc.edu/directory/profile/john-yin/", "where": "why pasteurising inactivates microbes and viruses", "areas": ["Systems biology: virus-host interactions", "Systems chemistry: molecular replicators"], "jump": ["Pasteuriser plates", "spot", 3]}];
+const RESEARCH = [{"name": "Rose Cersonsky", "page": "https://engineering.wisc.edu/directory/profile/rose-cersonsky/", "where": "ice crystal formation in the freezer", "areas": ["Molecular modeling and simulation", "Applied mathematics and machine learning", "Self-assembly of complex building blocks"], "jump": ["Freezer barrel", "spot", 6]}, {"name": "Quentin Dudley", "page": "https://engineering.wisc.edu/directory/profile/quentin-dudley/", "where": "plant-made flavors and ingredients", "areas": ["Plant synthetic biology", "Metabolic engineering", "Cell-free systems"], "jump": ["Mixing the recipe", "spot", 1]}, {"name": "Matt Gebbie", "page": "https://engineering.wisc.edu/directory/profile/matt-gebbie/", "where": "colloids and interfaces in the frozen foam", "areas": ["Electrochemistry", "Colloid and interface science", "Ionic liquids and electrolytes"], "jump": ["Microstructure", "go", "micro"]}, {"name": "George Huber", "page": "https://engineering.wisc.edu/directory/profile/george-huber/", "where": "turning dairy waste (acid whey) into a sweetener, with a catalytic lactose-hydrolysis reactor", "areas": ["Biofuels and biochemicals", "Heterogeneous catalysis", "Plastic recycling"], "jump": ["Whey reactor", "spot", 14]}, {"name": "Dan Klingenberg", "page": "https://engineering.wisc.edu/directory/profile/dan-klingenberg/", "where": "flow of the mix as a complex fluid and suspension", "areas": ["Colloid science", "Complex fluids", "Suspension rheology"], "jump": ["Holding tube", "spot", 4]}, {"name": "David Lynn", "page": "https://engineering.wisc.edu/directory/profile/david-lynn/", "where": "interfaces in emulsions and foams", "areas": ["Polymers and soft materials", "Surfaces and interfaces", "Biomaterials and biotechnology"], "jump": ["Homogeniser", "spot", 2]}, {"name": "Eric Shusta", "page": "https://engineering.wisc.edu/directory/profile/eric-shusta/", "where": "brain freeze: how cold reaches the brain", "areas": ["Brain drug delivery", "Blood-brain barrier modeling", "Biopharmaceutical design"], "jump": ["Dairy store", "spot", 13]}, {"name": "Ross Swaney", "page": "https://engineering.wisc.edu/directory/profile/ross-swaney/", "where": "process design of the plant", "areas": ["Process systems design, modeling and optimization", "Process modeling with guaranteed convergence", "Flowsheet synthesis of separation processes"], "jump": ["Whole plant", "view", "overview"]}, {"name": "John Yin", "page": "https://engineering.wisc.edu/directory/profile/john-yin/", "where": "why pasteurising inactivates microbes and viruses", "areas": ["Systems biology: virus-host interactions", "Systems chemistry: molecular replicators"], "jump": ["Pasteuriser plates", "spot", 3]}];
 let resOpen = false;
 function renderResearch() {
   const card = (r, i) => `<article class="res-card" id="res-${i}"><h4><a href="${r.page}" target="_blank" rel="noopener">${r.name} ↗</a></h4>
@@ -1977,7 +2018,17 @@ function drawPow() {
     g.fillStyle = css("--series-b"); g.fillRect(lw, y + 10, bw * r.W / max, 6);
     g.fillStyle = css("--ink"); g.font = "11px 'IBM Plex Mono', monospace"; g.fillText(`${f0(r.Q)}/${f0(r.W)} kW`, lw + bw + 5, y + 8); g.font = "11.5px 'IBM Plex Sans', sans-serif"; });
 }
-function drawCharts() { drawIce(); drawHtst(); drawHard(); drawCtl(); drawPh(); drawPow(); }
+function drawWhey() {
+  const cv = $("cWhey"); if (!cv || !cv.getBoundingClientRect().width) return;
+  const [g, w, h] = setupCanvas(cv), pad = { l: 34, r: 10, t: 20, b: 32 };
+  const [X, Y] = axes(g, w, h, pad, [0, 90], [0, 100], [0, 15, 30, 45, 60, 75, 90], [0, 25, 50, 75, 100], v => v, v => v); axTitles(g, w, h, pad, "Residence time, min", "Lactose split, %");
+  const temps = [p.Twh - 20, p.Twh, p.Twh + 20].filter(T => T >= 90 && T <= 180), cols = { [p.Twh - 20]: css("--series-c"), [p.Twh]: css("--series-a"), [p.Twh + 20]: css("--series-b") };
+  for (const T of temps) { const k = whey({ Twh: T, Fwh: 18 }).k, pts = []; for (let t = 0; t <= 90; t += 1) pts.push([X(t), Y((1 - Math.exp(-k * t / 60)) * 100)]); polyline(g, pts, cols[T], T === p.Twh ? 2.4 : 1.4, T === p.Twh ? [] : [4, 3]); }
+  const tm = Math.min(90, R.wh.tau * 60); vmark(g, X, h, pad, tm, "now", css("--ink-2"));
+  g.fillStyle = css("--series-a"); g.beginPath(); g.arc(X(tm), Y(R.wh.X * 100), 4, 0, 6.283); g.fill();
+  $("wheyLeg").innerHTML = temps.map(T => `<span><i style="border-color:${cols[T]}"></i>${T} °C</span>`).join("");
+}
+function drawCharts() { drawIce(); drawHtst(); drawHard(); drawCtl(); drawPh(); drawPow(); drawWhey(); }
 
 // ---------- UI refresh ----------
 function qbar(name, val, max, mark, unit, good) { const w = Math.min(100, val / max * 100), m = mark / max * 100, ok = good(val);
@@ -1999,6 +2050,7 @@ function refreshUI(full = false) {
     $("std").innerHTML = `<span style="grid-column:1/-1;font:600 11px var(--font-display);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)">US standard of identity, 21 CFR 135.110</span>` + R.std.items.map(([a, ok, v]) => `<span>${ok ? "✓" : "✗"} ${a}</span><span style="color:var(${ok ? "--good" : "--bad"})">${v}</span>`).join("");
     paintPipes();
     W.frost.material.opacity = Math.min(0.6, Math.max(0, (-p.Thard - 20) / 40));
+    if (W.wheyGlow) W.wheyGlow.emissiveIntensity = 0.15 + 0.85 * Math.max(0, (p.Twh - 100) / 60);
   }
   const al = [];
   if (!h.pmo) al.push(`Pasteurisation below the legal minimum for mix: ${f1(h.Thold)} °C / ${p.tHold} s, flow diverted`);

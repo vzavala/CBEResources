@@ -1,6 +1,6 @@
 // ∑ Model panel content: every equation below is solved by web/models.js (or the control loop in index.html)
 // with the same symbols and units. refs = numbers in the page's References list; "assumed" = chosen by us.
-import { PLANT, LM, TG_PRIME, nh3, recipe, perGallon, EVERYDAY } from "./models.js";
+import { PLANT, LM, TG_PRIME, nh3, recipe, perGallon, EVERYDAY, WHEY } from "./models.js";
 const f0 = v => Math.round(v).toLocaleString(), f1 = v => v.toFixed(1), f2 = v => v.toFixed(2), f3 = v => v.toFixed(3);
 const T = String.raw;
 
@@ -120,6 +120,20 @@ export const MODEL_GROUPS = [
     sym: [["\\$/\\mathrm{gal}", "cost to make one gallon", "$", "live"], ["3.785", "litres per gallon", "L", "3.785"], ["w_i", "ingredient i in the mix", "%", "from the recipe"], ["p_i", "ingredient price", "$/kg", "fat 6.0, MSNF 2.8, sugar 1.0, cocoa 5.0"], ["\\rho_{\\mathrm{ic}}", "ice cream density, Eq. (4)", "kg/L", "live"], ["E", "plant electric power", "kW", "live"], ["\\dot V_{\\mathrm{ic}}", "ice cream output", "L/h", "live"], ["p_e", "electricity price", "$/kWh", "0.10"], ["p_{\\mathrm{pack}}", "package cost", "$", "pint 0.10, tub 1.20"], ["V_{\\mathrm{pack}}", "package volume", "L", "0.473, 11.36"], ["W_{\\mathrm{total}}", "total electric power", "kW", "live"], ["Q_j", "refrigeration load j", "kW", "live"], ["\\mathrm{COP}_j", "COP for load j, Eq. (9)", "–", "live"], ["P_{\\mathrm{dasher}}", "dasher power, Eq. (17)", "kW", "live"]],
     live: R => { const g = perGallon(R); return `$${f2(g.costGal)} per gallon; ${f2(g.kWhE)} kWh electricity per gallon`; } },
  ]},
+ { name: "Reactor: acid whey to syrup (side stream)", eqs: [
+  { id: "whk", name: "Acid-catalysed lactose hydrolysis rate (Arrhenius)", go: "whey", refs: [22, 23, 26], assumed: "$E_a = 107\,\mathrm{kJ/mol}$ was measured for an organocatalyst [22] and is assumed here for H⁺ catalysis; $[\mathrm{H^+}] = 0.2\,\mathrm{mol/L}$ is illustrative. The by-product network with HMF [26] is not modelled",
+    tex: T`\begin{aligned}&\mathrm{C_{12}H_{22}O_{11}} + \mathrm{H_2O} \xrightarrow{\ \mathrm{H^+}\ } \mathrm{C_6H_{12}O_6}\,(\text{glucose}) + \mathrm{C_6H_{12}O_6}\,(\text{galactose}) \\ &r = k\,C_{\mathrm{lac}},\quad k(T) = k_{\mathrm{H^+}}\,[\mathrm{H^+}]\,\exp\!\Big[-\dfrac{E_a}{R}\Big(\dfrac1T - \dfrac1{T_{\mathrm{ref}}}\Big)\Big]\end{aligned}`,
+    sym: [["r", "rate of lactose hydrolysis", "mol/(L h)", "–"], ["k", "first-order rate constant", "1/h", "live"], ["C_{\\mathrm{lac}}", "lactose concentration", "mol/L", "≈ 0.6 at the inlet"], ["k_{\\mathrm{H^+}}", "rate constant per mole of protons, measured with sulfuric acid at 100 °C [22]", "L/(mol h)", "0.95"], ["[\\mathrm{H^+}]", "proton concentration in the reactor (illustrative)", "mol/L", "0.2"], ["E_a", "activation energy [22]", "kJ/mol", "107"], ["R", "gas constant", "J/(mol K)", "8.314"], ["T", "reactor temperature (slider)", "K", "373–433"], ["T_{\\mathrm{ref}}", "temperature at which the proton rate constant was measured", "K", "373.15"]],
+    live: R => `k = ${f2(R.wh.k)} h⁻¹ at ${f0(R.wh.T)} °C` },
+  { id: "whpfr", name: "Plug-flow reactor: conversion vs space time", go: "whey", refs: [23, 24], assumed: "isothermal plug flow, constant density; reactor volume 9 L is illustrative",
+    tex: T`\begin{aligned}&\tau = \dfrac{V_R}{\dot V} \\ &X = 1 - e^{-k\tau} \\ &Y_{\mathrm{mono}} = S\,X\end{aligned}`,
+    sym: [["\\tau", "space time (residence time in plug flow)", "h", "live"], ["V_R", "reactor volume (illustrative)", "L", "9"], ["\\dot V", "filtrate feed rate (slider)", "L/h", "6–40"], ["X", "lactose conversion", "–", "live"], ["Y_{\\mathrm{mono}}", "yield of glucose + galactose", "–", "live"], ["S", "selectivity to monosaccharides (lab reactor, as reported in [27])", "–", "0.99"]],
+    live: R => `τ = ${f0(R.wh.tau * 60)} min, X = ${f0(R.wh.X * 100)} %, Y = ${f0(R.wh.Y * 100)} %` },
+  { id: "whbal", name: "Syrup, sweetness and waste diverted (balances)", go: "whey", refs: [27, 28, 25], assumed: "filtrate 20 % lactose at 1.08 kg/L, syrup 70 % solids at 1.35 kg/L are illustrative; the acid-whey-to-syrup ratio is taken from a conference talk's techno-economic case [27]",
+    tex: T`\begin{aligned}&\dot m_{\mathrm{solids}} = \dot m_F\,w_{\mathrm{lac}}\Big[(1-X) + X\,\dfrac{2M_{\mathrm{mono}}}{M_{\mathrm{lac}}}\Big],\quad \dot m_{\mathrm{syrup}} = \dfrac{\dot m_{\mathrm{solids}}}{w_{\mathrm{syrup}}} \\ &s = \dfrac{(1-X)\,s_{\mathrm{lac}} + X\,\frac{2M_{\mathrm{mono}}}{M_{\mathrm{lac}}}\,\bar s_{\mathrm{mono}}}{(1-X) + X\,\frac{2M_{\mathrm{mono}}}{M_{\mathrm{lac}}}},\quad \dot m_{\mathrm{AW}} = 18.3\,\dot m_{\mathrm{syrup}}\end{aligned}`,
+    sym: [["\\dot m_{\\mathrm{solids}}", "sugar solids made", "kg/day", "live"], ["\\dot m_F", "filtrate fed to the reactor", "kg/day", "live"], ["w_{\\mathrm{lac}}", "lactose in the filtrate (illustrative)", "kg/kg", "0.20"], ["M_{\\mathrm{mono}}, M_{\\mathrm{lac}}", "molar masses of glucose (= galactose) and lactose", "g/mol", "180.16, 342.30"], ["\\dot m_{\\mathrm{syrup}}", "syrup made", "kg/day", "live"], ["w_{\\mathrm{syrup}}", "solids in the syrup (illustrative)", "kg/kg", "0.70"], ["s", "sweetness of the sugars, sucrose = 100", "–", "live"], ["s_{\\mathrm{lac}}, \\bar s_{\\mathrm{mono}}", "relative sweetness of lactose; mean of glucose 74 and galactose 60 [27]", "–", "16, 67"], ["\\dot m_{\\mathrm{AW}}", "acid whey diverted from disposal (1000 t/day per 54.6 t/day syrup [27])", "kg/day", "live"]],
+    live: R => `${f0(R.wh.syrupLD)} L/day of syrup, ${f1(R.wh.sweetX)}× as sweet as lactose, ${f1(R.wh.gawKgD / 1000)} t/day of acid whey diverted` },
+ ]},
 ];
 
 // every numeric constant, with its source (reference number) or "assumed"
@@ -153,6 +167,11 @@ export const MODEL_PARAMS = [
   ["Cold-store UA 0.35 kW/K, fans 6–10 kW, ambient 20 °C", "kW", "assumed"],
   ["PI K<sub>c</sub> = 2.5, τ<sub>I</sub> = 90 s", "–", "assumed (tuned by us)"],
   ["Prices: fat 6.0, MSNF 2.8, sugar 1.0, stabiliser 12, emulsifier 6 $/kg; 0.10 $/kWh", "$", "assumed (typical US)"],
+  ["Lactose hydrolysis k<sub>H⁺</sub> = 0.95 L/(mol h) at 100 °C (sulfuric acid), E<sub>a</sub> = 107 kJ/mol", "L/(mol h), kJ/mol", "22 (activation energy measured for an organocatalyst; assumed for H⁺)"],
+  ["Reactor: [H⁺] 0.2 mol/L, V<sub>R</sub> 9 L, filtrate 20 % lactose, 1.08 kg/L; syrup 70 % solids, 1.35 kg/L", "–", "illustrative"],
+  ["Monosaccharide selectivity 0.99; sweetness lactose 16, glucose 74, galactose 60 (sucrose 100)", "–", "27 (conference talk)"],
+  ["Acid whey per syrup 1000/54.6 = 18.3 kg/kg; 2–3 kg acid whey per kg Greek yogurt", "kg/kg", "27 (conference talk)"],
+  ["Pilot reactor in Babcock Hall: ≈ 100 L/day of syrup", "L/day", "28"],
 ];
 
 export const MODEL_METHOD = [
@@ -172,6 +191,7 @@ export const MODEL_LIMITS = [
   "Ammonia vapour is treated as an ideal gas with constant γ; compressor work is within a few per cent of table values at these ratios.",
   "Hardening uses a square-section box for round containers and a uniform surface coefficient; packages touching on pallets would harden more slowly.",
   "Pasteurisation lethality uses one organism with typical D and z; the legal check, not the log count, decides safety.",
+  "Acid-whey reactor: one isothermal plug-flow reactor with first-order, H⁺-catalysed kinetics. Catalyst choice (solid acid packed bed [23] or sulfuric acid [26]), catalyst poisoning by milk minerals [23], HMF and colour by-products [26], membrane filtration, neutralisation and evaporation are described, not simulated. Its sizes are illustrative and it does not change the ice cream numbers.",
 ];
 
 export const MODEL_VALIDATION = [

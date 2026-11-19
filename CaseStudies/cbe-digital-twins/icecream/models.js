@@ -14,6 +14,7 @@ export const DEFAULTS = {
   overrun: 80, Tdraw: -6.7, Phom: 17, Thard: -29,               // %, °C (20 °F), MPa (1st stage, Typical), °C air (−20 °F)
   Tpast: 82.2, tHold: 15, tAge: 16, Tstore: -29,                 // °C (180 °F), s, h, °C
   pkg: "pint",
+  Twh: 140, Fwh: 18,                                              // acid-whey reactor: °C, L/h of lactose filtrate (illustrative side stream)
 };
 export const PACKAGES = {      // round paper containers, modelled as square-section boxes of side 0.85·D (same wall distance)
   pint: { name: "Pint", L: 0.473, D: 0.090, H: 0.085, cost: 0.10 },
@@ -357,6 +358,40 @@ export function economics(p, c, fz, energy) {
   return { mixKg, ingL, kWhL, enL, packL, totalL: ingL + enL + packL, icLh };
 }
 
+// ---------------------------------------------------------------- acid-whey side stream: lactose hydrolysis reactor
+// A side stream like the pilot-scale reactor developed at UW–Madison to turn Greek-yogurt acid whey into a glucose–galactose
+// syrup (Dairy Innovation Hub project; Lindsay et al. 2018, 2020, 2022; Wang et al. 2025). It is not a model of that unit:
+// one plug-flow reactor with first-order, proton-catalysed kinetics. Nothing here feeds back into the ice cream numbers.
+export const WHEY = {
+  kH: 0.95,              // M⁻¹ h⁻¹ at 100 °C, H⁺-catalysed lactose hydrolysis, measured with sulfuric acid (Chang et al. 2023)
+  Ea: 107,               // kJ/mol, lactose hydrolysis (Chang et al. 2023, organocatalyst); assumed here for H⁺ catalysis
+  Tref: 100,             // °C, temperature of kH
+  H: 0.2,                // mol/L H⁺ in the reactor (illustrative)
+  VR: 9,                 // L, reactor volume (illustrative, sized for ≈ 100 L/day of syrup)
+  c0: 0.20,              // kg lactose per kg of filtrate fed to the reactor (illustrative)
+  rhoF: 1.08,            // kg/L filtrate (illustrative)
+  sel: 0.99,             // monosaccharide selectivity (Lindsay et al. 2020 lab reactor, as reported in Lindsay 2021 talk)
+  syrupTS: 0.70, rhoS: 1.35,                   // syrup solids and density after evaporation (illustrative)
+  gawPerSyrup: 1000 / 54.6,                    // kg acid whey per kg syrup: 54.6 t/day syrup from 1000 t/day (Lindsay 2021 talk)
+  gawPerYog: 2.5,                              // kg acid whey per kg Greek yogurt: 2–3 lb per lb (Lindsay 2021 talk)
+  sweet: { lactose: 16, glucose: 74, galactose: 60 },   // relative sweetness, sucrose = 100 (de Boer & Robbertsen 1981, in Lindsay 2021 talk)
+  Mlac: 342.30, Mmono: 180.16,
+};
+export function whey(p) {
+  const W = WHEY, T = p.Twh ?? 140, F = p.Fwh ?? 18;
+  const k = W.kH * W.H * Math.exp(-W.Ea * 1000 / Rgas * (1 / (T + T0K) - 1 / (W.Tref + T0K)));   // h⁻¹
+  const tau = W.VR / F;                                    // h, space time
+  const X = 1 - Math.exp(-k * tau);                        // plug flow, first order in lactose
+  const gain = 2 * W.Mmono / W.Mlac;                        // 1.053 kg of glucose + galactose per kg of lactose (water is added)
+  const feedKgD = F * 24 * W.rhoF, lacKgD = feedKgD * W.c0;
+  const monoKgD = lacKgD * X * W.sel * gain, solidsKgD = lacKgD * (1 - X) + lacKgD * X * gain;
+  const syrupKgD = solidsKgD / W.syrupTS, syrupLD = syrupKgD / W.rhoS;
+  const gawKgD = syrupKgD * W.gawPerSyrup, yogKgD = gawKgD / W.gawPerYog;
+  const sMono = (W.sweet.glucose + W.sweet.galactose) / 2;
+  const sweet = (lacKgD * (1 - X) * W.sweet.lactose + lacKgD * X * gain * sMono) / solidsKgD;   // sucrose = 100
+  return { T, F, k, tau, X, Y: X * W.sel, feedKgD, lacKgD, monoKgD, solidsKgD, syrupKgD, syrupLD, gawKgD, yogKgD, sweet, sweetX: sweet / W.sweet.lactose };
+}
+
 // ---------------------------------------------------------------- whole plant
 export function computeAll(p) {
   const ft = freezeTable(p), c = ft.c;
@@ -381,7 +416,7 @@ export function computeAll(p) {
   const energy = { Wcomp, Qtot, Qcond, COP: Qtot / Wcomp, dasher: fz.Pdash, homog: hom.motor, heat: ht.Qheat,
     total: Wcomp + fz.Pdash + hom.motor * PLANT.Qmix / PLANT.Qpast + 12 };       // homogeniser share by throughput; 12 kW pumps, filler, controls (Typical)
   const eco = economics(p, c, fz, energy), std = standards(p, c);
-  return { p, c, ft, ht, hom, age, fz, hard, q, loads, energy, eco, std };
+  return { p, c, ft, ht, hom, age, fz, hard, q, loads, energy, eco, std, wh: whey(p) };
 }
 
 // ---------------------------------------------------------------- product design: recipe from ingredients (mass balance)

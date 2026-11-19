@@ -256,6 +256,55 @@ export function buildWorld(scene) {
     add(g, cyl(0.18, 0.45, 18).rotateZ(Math.PI / 2), M.blue, 0.85, 0.45, 0); W.stations.batching = new THREE.Vector3(-3, 1.5, -6); }
   label(W.labels, "batching", "Powder blender & mix tanks", [-3, 4.6, -6]);
 
+  // ---------- 2b. acid-whey side stream: membranes, lactose-hydrolysis reactor, syrup back to the mix ----------
+  // Resembles, in layout only, a pilot-scale skid like the one developed at UW–Madison (Dairy Innovation Hub project); sizes are illustrative.
+  { const ZC = 2.2, Y = 0.95, sign = (txt, x, y, z, w = 1.1, ry = 0) => { const t = texCanvas(256, 56, (g, cw, ch) => { g.fillStyle = "#1f3b57"; g.fillRect(0, 0, cw, ch); g.fillStyle = "#ffffff"; g.font = "600 30px 'IBM Plex Sans', Arial, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(txt, cw / 2, ch / 2 + 1); });
+      const m = add(root, new THREE.PlaneGeometry(w, w * 56 / 256), new THREE.MeshBasicMaterial({ map: t, toneMapped: false }), x, y, z); m.rotation.y = ry; m.castShadow = false; return m; };
+    add(root, box(13.4, 0.12, 3.3), M.ssDark, -14.9, 0.06, ZC);                                      // skid base and drip tray
+    // acid whey feed tank
+    const feed = tank(root, -20.5, ZC, 1.5, 2.0, { legs: 0.5, manway: true }); sign("ACID WHEY", -20.5, 1.6, ZC + 0.77);
+    // membrane filtration: four spiral-wound modules in a frame, with a feed pump
+    const MX = -17.3;
+    for (const [dx, dz] of [[-0.55, -0.6], [0.55, -0.6], [-0.55, 0.6], [0.55, 0.6]]) add(root, box(0.06, 2.1, 0.06), M.ss, MX + dx, 1.17, ZC + dz);
+    for (const y of [0.7, 1.15, 1.6]) for (const dx of [-0.25, 0.25]) { const m = add(root, cyl(0.11, 1.3, 20).rotateX(Math.PI / 2), M.white, MX + dx, y, ZC); for (const s2 of [-1, 1]) add(root, cyl(0.12, 0.06, 20).rotateX(Math.PI / 2), M.ssPolish, MX + dx, y, ZC + s2 * 0.66); }
+    add(root, box(0.5, 0.35, 0.35), M.ss, MX - 1.1, 0.35, ZC + 1.0); add(root, cyl(0.12, 0.3, 16).rotateZ(Math.PI / 2), M.blue, MX - 0.75, 0.35, ZC + 1.0);
+    sign("MEMBRANES", MX, 2.45, ZC + 0.62);
+    // preheater (small plate pack) and the tubular reactor coil, heated and insulated
+    add(root, box(0.35, 0.9, 0.5), M.ss, -15.6, 0.75, ZC); for (let k = 0; k < 9; k++) add(root, box(0.02, 0.8, 0.46), M.ssDark, -15.75 + k * 0.035, 0.75, ZC);
+    const RX = -14.0, helix = []; for (let i = 0; i <= 240; i++) { const a = i / 240 * Math.PI * 2 * 7; helix.push(new THREE.Vector3(RX + Math.cos(a) * 0.42, 0.55 + i / 240 * 1.75, ZC + Math.sin(a) * 0.42)); }
+    W.wheyGlow = new THREE.MeshPhysicalMaterial({ color: "#c9cdd0", metalness: 0.9, roughness: 0.3, emissive: new THREE.Color("#ff7a1a"), emissiveIntensity: 0.4 });
+    add(root, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(helix), 480, 0.045, 10, false), W.wheyGlow);
+    add(root, cyl(0.12, 2.0, 20), M.insul, RX, 1.4, ZC);                                                 // central steam tube
+    for (const a of [0, 2.1, 4.2]) add(root, box(0.05, 2.3, 0.05), M.ss, RX + Math.cos(a) * 0.55, 1.15, ZC + Math.sin(a) * 0.55);
+    add(root, cyl(0.6, 0.06, 32), M.ss, RX, 2.35, ZC); add(root, cyl(0.07, 0.25, 12), M.red, RX + 0.35, 2.5, ZC + 0.2);   // top ring, pressure relief valve
+    sign("REACTOR", RX, 2.75, ZC + 0.62, 0.9);
+    // neutralisation and ion-exchange columns, then a small evaporator
+    for (const [x, z] of [[-12.2, ZC - 0.55], [-12.2, ZC + 0.55], [-11.6, ZC]]) { add(root, cyl(0.17, 1.7, 20), std("#e9eef2", { metalness: 0.1, roughness: 0.35 }), x, 1.05, z); add(root, cyl(0.19, 0.08, 20), M.ssDark, x, 1.94, z); }
+    const ev = tank(root, -10.2, ZC, 0.75, 1.5, { legs: 0.4 }); pipe(root, [-10.2, 2.25, ZC], [-10.2, 2.9, ZC], 0.06, M.ss);
+    // syrup tank (amber sight glass) and the line back to the blend tanks: the syrup is a sweetener for the mix
+    const SX = -8.9, sy = tank(root, SX, ZC + 0.7, 0.95, 1.1, { legs: 0.45, manway: true });
+    add(root, box(0.08, 0.7, 0.03), std("#c7871f", { metalness: 0, roughness: 0.2, emissive: new THREE.Color("#7a4a08"), emissiveIntensity: 0.4 }), SX, 1.0, ZC + 0.7 + 0.48);
+    sign("SYRUP", SX, 1.85, ZC + 1.2, 0.8);
+    const amber = std("#c98a2b", { metalness: 0.35, roughness: 0.35 });
+    W.syrupLine = polyPipe(root, [[SX, 1.9, ZC + 0.7], [SX, 3.7, ZC + 0.7], [-5, 3.7, ZC + 0.7], [-5, 3.7, -7.3], [-5, 3.45, -7.3]], 0.035, amber);
+    // milk minerals: bags on a pallet (a co-product of the filtration)
+    add(root, box(1.2, 0.15, 1.0), M.pallet, -12.3, 0.08, 4.6); for (let l = 0; l < 3; l++) for (let b = 0; b < 2; b++) add(root, box(0.55, 0.16, 0.9), M.bag, -12.6 + b * 0.6, 0.25 + l * 0.17, 4.6);
+    sign("MILK MINERALS", -12.3, 0.95, 5.12, 1.0);
+    // process piping between the units
+    polyPipe(root, [[-20.5, 0.6, ZC + 0.75], [-20.5, 0.35, ZC + 1.0], [MX - 1.35, 0.35, ZC + 1.0]], 0.03, M.ss);
+    polyPipe(root, [[MX + 0.6, Y, ZC], [-15.8, Y, ZC]], 0.03, M.ss);
+    polyPipe(root, [[-15.4, Y, ZC], [RX - 0.45, Y, ZC], [RX - 0.45, 0.55, ZC]], 0.03, M.ss);
+    polyPipe(root, [[RX + 0.42, 2.3, ZC], [-12.2, 2.3, ZC], [-12.2, 1.95, ZC - 0.55]], 0.03, M.ss);
+    polyPipe(root, [[-11.6, 0.3, ZC], [-10.6, 0.3, ZC], [-10.6, 0.7, ZC]], 0.03, M.ss);
+    polyPipe(root, [[-9.85, 0.6, ZC], [-9.2, 0.6, ZC + 0.4]], 0.03, M.ss);
+    // control panel with a trend screen, and an engineer checking the reactor
+    add(root, box(0.8, 1.5, 0.3), M.white, -16.0, 0.75, 3.75); add(root, box(0.6, 0.4, 0.02), M.screen, -16.0, 1.15, 3.6);
+    person(root, -14.2, 3.45, Math.PI, "#ffffff", { woman: true, skin: "#c68a5e", hair: "#2a1d14", h: 0.97 });
+    W.stations.whey = new THREE.Vector3(RX, 1.5, ZC);
+    void feed; void ev; void sy;
+  }
+  label(W.labels, "whey", "Acid whey → syrup reactor", [-14.5, 3.5, 2.2]);
+
   // ---------- 3. process room: homogeniser (first, warm), HTST plate unit, holding tube, CIP ----------
   const HX = 14;
   { const g = new THREE.Group(); g.position.set(8.5, 0, -9); root.add(g); W.homog = g;
