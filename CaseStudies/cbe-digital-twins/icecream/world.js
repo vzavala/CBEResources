@@ -257,7 +257,9 @@ export function buildWorld(scene) {
   label(W.labels, "batching", "Powder blender & mix tanks", [-3, 4.6, -6]);
 
   // ---------- 2b. acid-whey side stream: membranes, lactose-hydrolysis reactor, syrup back to the mix ----------
-  // Resembles, in layout only, a pilot-scale skid like the one developed at UW–Madison (Dairy Innovation Hub project); sizes are illustrative.
+  // Illustrative skid built only from public descriptions of the process (filtration, acid-catalysed hydrolysis, ion exchange, evaporation;
+  // Lindsay et al. 2018, 2020, 2022 and the public 2021 talk). The real Babcock Hall unit's layout, location, reactor type and settings are not
+  // public and are not represented: position, sizes and arrangement here are illustrative.
   { const ZC = 2.2, Y = 0.95, sign = (txt, x, y, z, w = 1.1, ry = 0) => { const t = texCanvas(256, 56, (g, cw, ch) => { g.fillStyle = "#1f3b57"; g.fillRect(0, 0, cw, ch); g.fillStyle = "#ffffff"; g.font = "600 30px 'IBM Plex Sans', Arial, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(txt, cw / 2, ch / 2 + 1); });
       const m = add(root, new THREE.PlaneGeometry(w, w * 56 / 256), new THREE.MeshBasicMaterial({ map: t, toneMapped: false }), x, y, z); m.rotation.y = ry; m.castShadow = false; return m; };
     add(root, box(13.4, 0.12, 3.3), M.ssDark, -14.9, 0.06, ZC);                                      // skid base and drip tray

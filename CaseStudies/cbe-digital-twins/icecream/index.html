@@ -1295,7 +1295,7 @@ renderRefs();
 $("tRefB").innerHTML = rf(16, 17, 18);
 const LREF = {
   "CBE 250": [[1, 6], [1], [16, 5]], "CBE 310": [[15], [3], [15]], "CBE 311": [[7, 8, 1], [15]], "CBE 320": [[9], [1], [3]],
-  "CBE 326": [[1, 3], [1], [3]], "CBE 426": [[]], "CBE 430": [[3, 4], [10, 1], [12, 13], [22, 23, 28]], "CBE 450": [[1], [15], [5]],
+  "CBE 326": [[1, 3], [1], [3]], "CBE 426": [[]], "CBE 430": [[3, 4], [10, 1], [12, 13], [22, 23, 27, 28]], "CBE 450": [[1], [15], [5]],
   "CBE 470": [[], [4]], "CBE 540": [[12, 1], [1]], "CBE 547": [[3, 14], [2], [2]], "CBE 560": [[3, 4]], "FOOD SCI 511": [[2, 1]],
 };
 
@@ -1568,7 +1568,7 @@ function renderRW() {
       <li><b>Energy:</b> ${f0(e.Wcomp)} kW of compressors, ${f2(g.kWhE)} kWh per gallon.</li>
       <li><b>Trade-off:</b> ammonia is climate-safe but toxic${rf(20)}.</li>
       <li><b>Cost:</b> ≈ $${f2(g.costGal)} per gallon (Typical prices).</li>
-      <li><b>Waste to sweetener:</b> a side reactor turns acid whey into syrup for the mix.</li>
+      <li><b>Waste to sweetener:</b> a side reactor turns acid whey into syrup for the mix${rf(28, 25, 27)}.</li>
       <li><b>Same steps:</b> milk, juice, vaccines, the cold chain.</li>
     </ul>
     <div><b>ChemE jobs:</b> process, product, quality, energy and automation engineers.</div>`;
@@ -1836,8 +1836,8 @@ function renderWhey() {
   $("wheyKV").innerHTML = `<dt>Residence time</dt><dd>${f0(x.tau * 60)} min</dd><dt>Rate constant at ${f0(x.T)} °C</dt><dd>${f2(x.k)} per hour</dd>
     <dt>Lactose split into glucose + galactose</dt><dd class="big">${f0(x.X * 100)} %</dd><dt>Syrup made (70 % sugars)</dt><dd class="big">${f0(x.syrupLD)} L/day</dd>
     <dt>Sweetness vs lactose</dt><dd>${f1(x.sweetX)}×</dd><dt>Acid whey kept out of disposal</dt><dd>${f1(x.gawKgD / 1000)} t/day</dd><dt>Greek yogurt that whey comes from</dt><dd>≈ ${f1(x.yogKgD / 1000)} t/day</dd>`;
-  TK("tk-whey", `<b>Waste to sweetener:</b> ${f0(x.X * 100)} % of the lactose is split, so the syrup is ${f1(x.sweetX)}× as sweet as the lactose it came from. A day's syrup could replace a quarter of the sucrose in this line's mix for about ${hrs < 10 ? f1(hrs) : f0(hrs)} hours of freezing${x.X < 0.8 ? ". Raise the temperature or slow the feed to split more" : ""}. Hotter is faster, but by-products such as HMF also rise (not modelled).`);
-  $("wheyNote").innerHTML = `Like the pilot-scale reactor developed at UW–Madison to make glucose–galactose syrup from acid whey${rf(28, 23, 25)}; this is not a model of that unit. Kinetics from published measurements${rf(22)}; reactor size, acid level and syrup strength are illustrative.`;
+  TK("tk-whey", `<b>Waste to sweetener:</b> ${f0(x.X * 100)} % of the lactose is split, so the syrup is ${f1(x.sweetX)}× as sweet as the lactose it came from${rf(27)}. A day's syrup could replace a quarter of the sucrose in this line's mix for about ${hrs < 10 ? f1(hrs) : f0(hrs)} hours of freezing, as tried in soft-serve${rf(27)}${x.X < 0.8 ? ". Raise the temperature or slow the feed to split more" : ""}. Hotter is faster, but by-products such as HMF also rise${rf(26)} (not modelled).`);
+  $("wheyNote").innerHTML = `Like the pilot-scale reactor developed at UW–Madison to make glucose–galactose syrup from acid whey${rf(28)}; this is not a model of that unit. Built only from public sources: process steps${rf(24, 23, 25, 27)}, kinetics${rf(22)}, yields, sweetness and whey ratios${rf(27)}. The skid's place, layout, reactor type, size and set-points, the acid level and the syrup strength are illustrative, not those of the real unit.`;
 }
 function renderTkCtl() {
   const dev = ctl.Tdraw - p.Tdraw, dTe = ctl.Te - R.fz.Tevap;
