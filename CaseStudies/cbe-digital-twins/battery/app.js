@@ -640,6 +640,7 @@ const researchLine = () => "";   // Part N simplified: no research lines on lens
 // ---------- User guide (Part M) ----------
 const GUIDE = `
   <p><b>What this is:</b> a live digital twin of a lithium-ion battery, from the mine to the recycling plant. A cell model and a life-cycle footprint run in your browser.</p>
+  <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
   <h4>How to explore</h4>
   <ul><li><b>Overview</b> (Supply chain button): the whole chain, every spot numbered.</li><li><b>Click a numbered spot</b> or a row in the <b>ChemE spots</b> list to zoom in and open its card.</li><li><b>Drag</b> to orbit · <b>scroll</b> or pinch to zoom.</li><li><b>Camera buttons</b> (bottom): Mines → Recycling, and EV pack → Module → Cell → Particles → Crystal.</li></ul>
   <h4>Buttons</h4>

@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.copy{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}</style></head><body>
 <meta charset="utf-8">
 <title>Gameday ChemE Digital Twin</title>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
@@ -462,6 +461,7 @@ header .btn.guide { margin-left: auto; } header .btn.guide ~ .seg { margin-left:
 #guideBody { overflow-y: auto; padding: 6px 16px 16px; font-size: 13.5px; line-height: 1.45; }
 #guideBody h5 { font: 700 12px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-deep); margin: 12px 0 4px; }
 #guideBody ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; } #guideBody .g-lead { margin: 8px 0 0; }
+#guideBody .disclaimer { margin: 8px 0 0; color: #c5050c; font-weight: 600; overflow-wrap: anywhere; }
 .aside-bar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font: 700 11.5px var(--font-display); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
 .aside-bar button { margin-left: auto; border: 1px solid var(--ctl-border); background: #fff; border-radius: 6px; width: 28px; height: 24px; cursor: pointer; font-size: 14px; color: var(--ink); }
 .aside-bar button:hover { border-color: var(--accent); color: var(--accent); }
@@ -480,7 +480,7 @@ body.popped .aside-bar { cursor: move; }
 .trend-strip .chart canvas { width: 100%; display: block; }
 @media (max-width: 860px) { .trend-strip { grid-template-columns: minmax(0, 1fr); } .trend-strip .ts-head { flex-wrap: wrap; white-space: normal; } .trend-strip .ts-leg { flex-wrap: wrap; } }
 footer .copy { font-size: 11px; line-height: 1.2; color: var(--ink-2); text-align: center; margin-top: -4px; }
-@media (max-width: 420px) { footer .copy { font-size: 10px; letter-spacing: -.01em; white-space: nowrap; } }
+@media (max-width: 420px) { footer .copy { font-size: 10px; } }
 #lens-card .lc-x:hover { border-color: var(--accent); color: var(--accent); }
 #crsPanel, #mdlPanel { border: 2px solid var(--accent); box-shadow: 0 10px 40px rgba(15,23,42,.18); }
 #tag, .lm { background: rgba(255,255,255,.88); color: var(--ink); }
@@ -520,6 +520,7 @@ footer .copy { font-size: 11px; line-height: 1.2; color: var(--ink-2); text-alig
       <div class="crs-head"><h2>User guide</h2><button class="lc-x" id="guideClose" type="button" aria-label="Close user guide">×</button></div>
       <div id="guideBody">
         <p class="g-lead">A live model of a football game day. Every number comes from chemical-engineering equations running in your browser.</p>
+        <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
         <h5>How to explore</h5>
         <ul>
           <li><b>Overview</b> (camera bar): the whole stadium with all 10 numbered ChemE spots.</li>
@@ -1959,5 +1960,3 @@ renderInlineTex();
 document.fonts?.load("1em KaTeX_Main").then(f => { if (f.length) return; KX_OUT = "mathml"; kxCache.clear(); mdl.built = false; renderInlineTex(); if (lens.on) lensGo(lens.i); if (tour.on) tourGo(tour.i); }).catch(() => {});
 window.__twin = { RESEARCH, toggleResearch, texHTML, get KX_OUT() { return KX_OUT; }, QUALITY, perf, get composer() { return composer; }, get gtao() { return gtao; }, sky, applyPS, toggleCourses, toggleModel, mdl, EQS, EQNUM, crs, openLens, openSpotLens, closeLens, lensGo, lens, LENS, openRW, closeRW, THREE, M, S, W, scene, camera, controls, renderer, ctrl, player, setView, setRate, setPlaying, setTour, tourGo, openModel, closeModel, setThermal, tour, frame, recompute, refreshUI, get hour() { return hour; }, set hour(v) { hour = v; }, lockSize: false };
 </script>
-
-</body></html>

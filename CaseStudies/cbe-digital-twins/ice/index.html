@@ -248,6 +248,7 @@ input[type=number], select { background: #fff; border-color: var(--ctl-border); 
 .status-chip.go { background: var(--accent-tint); color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); }
 .status-chip.water { background: #e8f0fb; color: var(--signal); }
 /* ---- twin-specific additions, built from kit tokens ---- */
+.guide .disclaimer { color: #c5050c; font-weight: 600; overflow-wrap: anywhere; }
 footer .copy { margin: 0; text-align: center; font: 400 11px var(--font-body); color: var(--ink-2); line-height: 1.2; }
 .ai-chip { font: 700 10.5px var(--font-display); letter-spacing: .06em; text-transform: uppercase; background: var(--accent); color: #fff; padding: 1px 6px; border-radius: 99px; vertical-align: 2px; margin-left: 4px; }
 .res-where { font-size: 13px; margin: 2px 0 0; color: var(--ink); }
@@ -557,6 +558,7 @@ table.sym { border-collapse: collapse; font-size: 12.5px; width: 100%; }
 <div class="overlay" id="guide-panel" hidden><div class="ov-box guide" role="dialog" aria-modal="true" aria-labelledby="guide-title">
   <div class="ov-head"><h2 id="guide-title">User guide</h2><button class="x" type="button" id="guide-close" aria-label="Close">×</button></div>
   <p>A live model of Lake Mendota's ice through a real Madison winter. It shows how heat flow sets the ice thickness, when the ice is safe, and what a warmer climate does.</p>
+  <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
   <h3>How to explore</h3>
   <ul class="g-list">
     <li>Starts on the <b>Overview</b>: every numbered spot is visible.</li>

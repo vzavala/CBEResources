@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.copy{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}</style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Modern Agriculture Digital Twin</title>
@@ -358,7 +357,7 @@ header .btn.start-here.seen { animation: none; }
 #guide-panel { position: fixed; z-index: 60; top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: min(560px, calc(100% - 24px)); max-height: calc(100% - 24px); display: flex; flex-direction: column; background: #fff; border: 2px solid var(--accent); border-radius: 12px; box-shadow: 0 10px 40px rgba(15,23,42,.18); overflow: hidden; }
 #guide-panel[hidden] { display: none; }
 .guide-body { font-size: 13.5px; line-height: 1.45; }
-.guide-body h3 { margin: 14px 0 4px; } .guide-body ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; } .guide-lead { margin: 10px 0 0; }
+.guide-body h3 { margin: 14px 0 4px; } .guide-body ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; } .guide-lead { margin: 10px 0 0; } .guide-body .disclaimer { margin: 8px 0 0; color: #c5050c; font-weight: 600; white-space: normal; overflow-wrap: break-word; } .guide-body .disclaimer b { font-weight: 700; }
 .sw-g, .sw-y, .sw-b { padding: 0 5px; border-radius: 3px; color: #fff; font-weight: 600; } .sw-g { background: #2e8b3a; } .sw-y { background: #c9a227; } .sw-b { background: #7a5a3a; }
 .aside-bar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: var(--panel-2); border-bottom: 1px solid var(--rule); font: 700 12px var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
 .pop-btn { border: 1px solid var(--ctl-border); background: #fff; border-radius: 6px; width: 28px; height: 26px; cursor: pointer; font-size: 15px; line-height: 1; color: var(--ink); }
@@ -372,7 +371,7 @@ body.popped .aside-bar { cursor: move; }
 #ndvi-legend b { display: block; font: 700 11.5px var(--font-display); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
 #ndvi-legend i { display: block; height: 10px; border-radius: 3px; background: linear-gradient(90deg, #7a5a3a, #c9a227 45%, #2e8b3a); }
 #ndvi-legend div { display: flex; justify-content: space-between; margin-top: 2px; } #ndvi-legend small { color: var(--ink-2); }
-footer .copy { margin: 0; text-align: center; font-size: 11px; line-height: 1.2; color: var(--ink-2); }
+footer .copy { margin: 0; text-align: center; white-space: normal; overflow-wrap: anywhere; font-size: 11px; line-height: 1.2; color: var(--ink-2); }
 /* ===== Part M: spots table, leaders, name labels ===== */
 #spots .leaders { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 #spots .leaders line { stroke: var(--accent); stroke-width: 1.5; } #spots .leaders circle { fill: var(--accent); }
@@ -727,6 +726,7 @@ aside, footer { background: var(--panel-2); }
   <div class="crs-head"><h2 id="guide-title">User guide</h2><button type="button" class="crs-x guide-x" aria-label="Close user guide">×</button></div>
   <div class="crs-body guide-body">
     <p class="guide-lead">A live model of a Wisconsin dairy and crop farm. Grow a season and see where fertilizer, water and phosphorus go.</p>
+    <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
     <h3>How to explore</h3>
     <ul>
       <li><b>Overview:</b> the whole farm; the <b>Farm</b> camera button returns here.</li>
@@ -779,5 +779,3 @@ aside, footer { background: var(--panel-2); }
 } }
 </script>
 <script type="module" src="./app.js"></script>
-
-</body></html>

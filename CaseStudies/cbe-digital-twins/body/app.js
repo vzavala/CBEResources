@@ -279,6 +279,7 @@ function refreshEbox() {
 // ---------- Part M: User guide overlay, pop-out information panel ----------
 $("guideBody").innerHTML = `
   <p class="g-what">A live model of one healthy body run as a chemical plant. Every number comes from equations you can open in <b>∑ Model</b>.</p>
+  <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
   <h4>How to explore</h4><ul>
     <li>🧍 <b>Overview</b> (bottom bar): the whole body, all spots numbered.</li>
     <li>🔴 Click a <b>numbered spot</b> or its row in the spots list to zoom in and learn.</li>

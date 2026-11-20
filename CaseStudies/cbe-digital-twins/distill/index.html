@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.copy{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}</style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Summer Lab Distillation Digital Twin</title>
@@ -485,6 +484,7 @@ main.has-pfd #pfd { display: flex; }
 .pf-legend { display: flex; flex-wrap: wrap; gap: 3px 12px; justify-content: center; margin: 2px 0 0; font-size: 11.5px; color: var(--ink-2); }
 .pf-legend .ln { display: inline-block; width: 18px; height: 0; border-top: 2.4px solid #1d2733; vertical-align: middle; margin-right: 5px; } .pf-legend .ln.water { border-color: #1f6fd1; } .pf-legend .ln.energy { border-color: #b26a00; } .pf-legend .ln.sig { border-top: 1.6px dashed #5d6875; }
 @media (max-width: 860px) { #pfd { border-left: 0; border-top: 1px solid var(--rule); } #pfd-body svg { flex: none; aspect-ratio: 380 / 512; max-height: 80vh; } }
+.disclaimer { color: #c5050c; font-weight: 600; margin: 0; white-space: normal; overflow-wrap: anywhere; } .disclaimer b { font-weight: 700; }
 </style>
 <header>
   <h1>Summer Lab Distillation <small><span style="white-space:nowrap">Digital Twin</span> · <span style="white-space:nowrap">ethanol–water sieve-tray column</span></small></h1>
@@ -667,6 +667,7 @@ main.has-pfd #pfd { display: flex; }
   <div class="ov-head"><h2 id="gd-title">User guide</h2><button class="x" type="button" id="gd-close" aria-label="Close">×</button></div>
   <div id="gd-body">
     <p>A live model of a 14-tray column separating ethanol from water. It resembles the column in the department's summer lab and is fitted to four student runs.</p>
+    <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
     <h3>How to explore</h3>
     <ul>
       <li>🏭 Opens on the <b>Overview</b> of the lab bay, running at steady state.</li>
@@ -710,5 +711,3 @@ main.has-pfd #pfd { display: flex; }
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script type="module" src="app.js"></script>
-
-</body></html>

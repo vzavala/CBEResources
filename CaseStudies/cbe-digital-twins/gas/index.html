@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.copy{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}</style></head><body>
 <meta charset="utf-8">
 <title>Natural Gas Pipelines Digital Twin</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -225,7 +224,8 @@ footer {
 .ts-head .leg.ts-leg i { width: 12px; margin-right: 3px; }
 .ts-head .cbar.ts-leg canvas { width: 90px; }
 @media (max-width: 860px) { .trend-strip { grid-template-columns: 1fr; } .ts-head { flex-wrap: wrap; white-space: normal; } .ts-head .ts-leg { margin-left: 0; flex-wrap: wrap; } }
-footer .copy { text-align: center; font: 400 11px var(--font-body); color: var(--ink-2); line-height: 1.2; margin-top: -4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#guideBody .disclaimer { color: #c5050c; font-weight: 600; overflow-wrap: anywhere; }
+footer .copy { text-align: center; font: 400 11px var(--font-body); color: var(--ink-2); line-height: 1.25; margin-top: -4px; overflow-wrap: anywhere; }
 @media (max-width: 420px) { footer .copy { font-size: clamp(9px, 2.6vw, 11px); } }
 #solver { font-size: 11.5px; }
 @media (max-width: 860px) {
@@ -547,6 +547,7 @@ a.cc { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
       <div class="crs-head"><h3>User guide</h3><button class="lc-x" id="guideClose" aria-label="Close user guide">×</button></div>
       <div id="guideBody">
         <p class="g-what">A 1600 km natural gas pipeline from a research model (Zavala, 2014), with 10 compressor stations and 7 customers. Everything you see is computed live.</p>
+        <p class="disclaimer"><b>Disclaimer:</b> This is for educational purposes only. This digital twin is based on a combination of public data, scientific publications and fictionalized settings.</p>
         <h4>How to explore</h4>
         <ul class="g-list">
           <li>Starts on the <b>Overview</b> of the whole line.</li>
@@ -2757,5 +2758,3 @@ checkPS();
 addEventListener("hashchange", checkPS);
 window.__twin = { THREE, sim, scene, camera, controls, renderer, W, setView, setRate, setPlaying, setXray, setOpen, setPress, setBalloon, setTour, tourGo, zoomTo, flyToCustomer, CUSTOMERS, SPOTS, applyPS, toggleModel, toggleCourses, APP_COURSES, sim_ref: () => sim, openLens, closeLens, lensGo, lens, LENSES, openModel, closeModel, tour, frame, ctrl, Q, setQuality, setRenderSize, composer, gtao, bloom, sky, clouds, csStart, openSnap, CS, csHist, sun, hemi, resetModel, refreshUI, get tRender() { return tRender; }, lockSize: false };
 </script>
-
-</body></html>
