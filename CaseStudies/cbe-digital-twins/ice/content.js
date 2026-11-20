@@ -34,6 +34,16 @@ export const REFS = [
   `UW–Madison Center for Limnology. "Where does Lake Mendota's 2025 freeze date rank in the 170-year record?" 6 Jan 2026 (median ice-on 20 Dec). <a href="https://blog.limnology.wisc.edu/2026/01/06/where-does-lake-mendotas-2025-freeze-date-rank-in-the-170-year-record/" target="_blank" rel="noopener">Link ↗</a>`,
   // 16
   `University of Wisconsin–Madison. <i>Guide</i>: Chemical and Biological Engineering (CBE) courses. <a href="https://guide.wisc.edu/courses/cbe/" target="_blank" rel="noopener">Link ↗</a>`,
+  // 17
+  `The Engineering ToolBox. "Emissivity Coefficients Materials" (water 0.95–0.963, smooth ice 0.966). <a href="https://www.engineeringtoolbox.com/emissivity-coefficients-d_447.html" target="_blank" rel="noopener">Link ↗</a>`,
+  // 18
+  `NIST. CODATA 2018 value of the Stefan–Boltzmann constant, σ = 5.670 374 419 × 10⁻⁸ W m⁻² K⁻⁴. <a href="https://physics.nist.gov/cgi-bin/cuu/Value?sigma" target="_blank" rel="noopener">Link ↗</a>`,
+  // 19
+  `W. Brutsaert. "On a derivable formula for long-wave radiation from clear skies." <i>Water Resources Research</i> 11(5) (1975) 742–744. <a href="https://doi.org/10.1029/WR011i005p00742" target="_blank" rel="noopener">doi ↗</a>`,
+  // 20
+  `D. Bolton. "The computation of equivalent potential temperature." <i>Monthly Weather Review</i> 108(7) (1980) 1046–1053 (saturation vapour pressure formula). <a href="https://doi.org/10.1175/1520-0493(1980)108%3C1046:TCOEPT%3E2.0.CO;2" target="_blank" rel="noopener">doi ↗</a>`,
+  // 21
+  `T. M. Crawford, C. E. Duchon. "An improved parameterization for estimating effective atmospheric emissivity for use in calculating daytime downwelling longwave radiation." <i>Journal of Applied Meteorology</i> 38(4) (1999) 474–480. <a href="https://doi.org/10.1175/1520-0450(1999)038%3C0474:AIPFEE%3E2.0.CO;2" target="_blank" rel="noopener">doi ↗</a>`,
 ];
 export const ref = (...n) => `<sup class="refsup">${n.map(k => `<a href="#ref-${k}" class="ref" data-ref="${k}">${k}</a>`).join(",")}</sup>`;
 
@@ -59,6 +69,7 @@ export const FEATURES = [
   { id: "record", name: "170-year Mendota ice record", go: "climate" },
   { id: "numerics", name: "Moving-boundary solver", go: "m-num" },
   { id: "validation", name: "Validation against exact solution and data", go: "m-val" },
+  { id: "night", name: "Clear-night radiation (skin ice above 0 °C)", go: "night" },
 ];
 
 const PS = "../problems/#ice-";
@@ -79,7 +90,7 @@ export const COURSES = [
     topics: ["enthalpy-changes", "pure-phase-equilibrium", "first-law"],
     student: "Compare latent heat for 30 cm of ice with sensible heat for a 10 °C drop. Find $\\mathrm{Ste}$.",
     instructor: "Solid–liquid equilibrium fixes the front at 0 °C; Ste compares sensible with latent heat." },
-  { n: 320, features: ["cutaway", "front", "insul", "chart", "validation"],
+  { n: 320, features: ["cutaway", "front", "insul", "chart", "validation", "night"],
     topics: ["conduction", "shell-balances", "equations-of-change", "convection"],
     student: "Derive Stefan's law (8), $h = \\sqrt{2kS/\\rho L}$, from a shell balance; add the snow and air resistances.",
     instructor: "The Bird–Stewart–Lightfoot quasi-steady method on a real lake, checked against the exact solution." },
@@ -87,7 +98,7 @@ export const COURSES = [
     topics: ["conduction", "convection", "data-analysis"],
     student: "Compare the twin with the measured 17 cm (2012) and ~61 cm (2014). What would you measure next?",
     instructor: "Model vs field data with honest uncertainty; snow on the lake matters most." },
-  { n: 326, features: ["insul", "chart", "cutaway"],
+  { n: 326, features: ["insul", "chart", "cutaway", "night"],
     topics: ["conduction", "convection", "heat-exchangers"],
     student: "Use $h_a = 5.7 + 3.8\\,V$ at 1 and 8 m/s. How much thicker is the 2013–14 ice in strong wind?",
     instructor: "Overall heat-transfer coefficient through ice, snow and an air film, like a heat-exchanger wall." },

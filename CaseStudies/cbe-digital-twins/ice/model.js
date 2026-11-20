@@ -203,3 +203,28 @@ export const IN = 0.0254;
 export function safetyLevel(h) { let k = 0; SAFETY.forEach((s, i) => { if (h >= s.inch * IN - 1e-9) k = i; }); return k; }
 // First day index with thickness >= x metres (or null)
 export function firstDayAtLeast(h, x) { for (let i = 0; i < h.length; i++) if (h[i] !== null && h[i] >= x) return i; return null; }
+
+// ---------------- Night-time surface energy balance with longwave radiation (eqs. 14-17) ----------------
+// A separate calculator: the season model above is unchanged. Skin ice on calm, already-cold surface water.
+export const RAD = { sigma: 5.670374419e-8,   // Stefan-Boltzmann constant, W/(m2 K4) (CODATA 2018, NIST)
+  epsS: 0.96 };                                // emissivity of water / ice surface (Engineering ToolBox: water 0.95-0.963, smooth ice 0.966)
+const K0 = 273.15;
+export const satVP = T => 6.112 * Math.exp(17.67 * T / (T + 243.5));                       // hPa, T in °C (Bolton 1980)
+export const epsClear = (Ta, RH) => 1.24 * Math.pow((RH / 100) * satVP(Ta) / (Ta + K0), 1 / 7);   // clear sky (Brutsaert 1975), e_a in hPa, T in K
+export const epsSky = (Ta, RH, cloud) => cloud + (1 - cloud) * epsClear(Ta, RH);           // cloud fraction 0-1 (Crawford & Duchon 1999 form)
+// Net heat leaving a surface held at Ts (°C): longwave out minus longwave absorbed from the sky minus convective gain from the air
+export function netLoss(Ts, { Ta, RH, cloud, wind }) {
+  const e = epsSky(Ta, RH, cloud), qRad = RAD.epsS * RAD.sigma * ((Ts + K0) ** 4 - e * (Ta + K0) ** 4), qConv = hAir(wind) * (Ta - Ts);
+  return { qRad, qConv, qNet: qRad - qConv };
+}
+export function nightBalance(p) {
+  const e = epsSky(p.Ta, p.RH, p.cloud), Tsky = Math.pow(e, 0.25) * (p.Ta + K0) - K0;
+  const at0 = netLoss(0, p);                                        // surface water at the freezing point
+  const growth = Math.max(0, at0.qNet) * 12 * 3600 / (PROPS.rhoI * PROPS.L) * 1000;   // mm of skin ice in a 12-h night if nothing else supplies heat
+  let T = p.Ta;                                                     // equilibrium skin temperature with no heat from below (Newton)
+  for (let i = 0; i < 40; i++) { const f = netLoss(T, p).qNet, d = 4 * RAD.epsS * RAD.sigma * (T + K0) ** 3 + hAir(p.wind); T -= f / d; }
+  let lo = -20, hi = 25;                                            // warmest air temperature with net loss at 0 °C still >= 0
+  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (netLoss(0, { ...p, Ta: m }).qNet >= 0) lo = m; else hi = m; }
+  return { eClear: epsClear(p.Ta, p.RH), eSky: e, Tsky, ea: p.RH / 100 * satVP(p.Ta), ha: hAir(p.wind), ...at0, freezes: at0.qNet > 0, growth, Tskin: T, skin: netLoss(T, p), TaMax: lo };
+}
+export const NIGHT_DEFAULT = { Ta: 3, RH: 70, cloud: 0, wind: 1 };   // illustrative clear, light-wind night

@@ -2,7 +2,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { makeSky, makePost, snowMaps, blackIceMaps, iceFaceTexture, makeShanty, makeAngler, makeIceChips, makeForest, makeWinterWoods, makeFish, makeSparkle, makeSkyline, makeTerrain, rngFrom, RoundedBoxGeometry } from "./scene_hq.js";
-import { PROPS, DEFAULTS, hAir, surfaceR, stefanH, runWinter, freezeUpIndex, SAFETY, IN, safetyLevel, firstDayAtLeast, neumannLambda } from "./model.js";
+import { PROPS, DEFAULTS, hAir, surfaceR, stefanH, runWinter, freezeUpIndex, SAFETY, IN, safetyLevel, firstDayAtLeast, neumannLambda, RAD, satVP, nightBalance, NIGHT_DEFAULT } from "./model.js";
 import { MADISON } from "./data/madison_winters.js";
 import { MENDOTA } from "./data/mendota_ice.js";
 import { REFS, ref, COURSE, FEATURES, COURSES, PS_LINK, LENSES, SPOTS } from "./content.js";
@@ -812,6 +812,32 @@ $("pop-btn").onclick = () => setPopped(!document.body.classList.contains("popped
   $("panel-bar").addEventListener("pointerup", () => { drag = null; }); }
 try { if (localStorage.getItem("ice-panel-popped") === "1" && !matchMedia("(max-width: 860px)").matches) setPopped(true); } catch (e) {}
 
+
+// ---------------- Clear night: radiation (eqs. 14-17), a separate surface-balance calculator ----------------
+const NIGHT = { ...NIGHT_DEFAULT };
+const sgn = x => { const v = Math.round(x * 10) / 10; return (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1); }, wm = x => sgn(x).replace("+", "");
+function renderNight() {
+  const r = nightBalance(NIGHT);
+  $("nt-air").value = NIGHT.Ta; $("nt-rh").value = NIGHT.RH; $("nt-cloud").value = Math.round(NIGHT.cloud * 100); $("nt-wind").value = NIGHT.wind;
+  $("nt-air-out").textContent = `${sgn(NIGHT.Ta)} °C`; $("nt-rh-out").textContent = `${NIGHT.RH} %`; $("nt-cloud-out").textContent = `${Math.round(NIGHT.cloud * 100)} %`; $("nt-wind-out").textContent = `${NIGHT.wind.toFixed(1)} m/s`;
+  const row = (t, v) => `<dt>${t}</dt><dd>${v}</dd>`;
+  $("nt-read").innerHTML = row("Sky emissivity (16)", r.eSky.toFixed(3)) + row("Effective sky temperature", `${sgn(r.Tsky)} °C`)
+    + row("Radiative loss at 0 °C (14)", `${wm(r.qRad)} W/m²`) + row("Convective gain from air", `${wm(r.qConv)} W/m²`)
+    + row("Net loss at 0 °C (17)", `<b>${wm(r.qNet)} W/m²</b>`) + row("Skin ice in a 12-h night", r.freezes ? `${r.growth.toFixed(1)} mm` : "none")
+    + row("Skin temperature, no heat from below", `${sgn(r.Tskin)} °C`) + row("Warmest air that still freezes", `${sgn(r.TaMax)} °C`);
+  $("tk-night").innerHTML = r.freezes
+    ? `<b>Freezes.</b> Air ${sgn(NIGHT.Ta)} °C, yet a 0 °C surface loses ${r.qNet.toFixed(0)} W/m² net: the sky radiates like a body at ${sgn(r.Tsky)} °C. Freezing is possible up to ${sgn(r.TaMax)} °C air for this sky and wind.`
+    : `<b>No ice.</b> At ${sgn(NIGHT.Ta)} °C air the 0 °C surface gains ${(-r.qNet).toFixed(0)} W/m² net. ${NIGHT.cloud > 0.5 ? "Low clouds radiate back as much as the surface emits, or more." : "The air warms the surface faster than it can radiate."} Freezing needs air below ${sgn(r.TaMax)} °C here.`;
+  $("nt-clear").setAttribute("aria-pressed", String(NIGHT.Ta === 3 && NIGHT.cloud === 0 && NIGHT.wind === 1 && NIGHT.RH === 70));
+  $("nt-over").setAttribute("aria-pressed", String(NIGHT.Ta === 3 && NIGHT.cloud === 1 && NIGHT.wind === 1 && NIGHT.RH === 70));
+  if (mdlOpen) document.querySelectorAll("#mdl-body [data-live]").forEach(el => { const e = EQ_BY_NO[+el.dataset.live]; if (e.no >= 14) el.innerHTML = mathify(esc(e.live())); });
+}
+function setNight(p) { Object.assign(NIGHT, p); renderNight(); }
+$("nt-air").oninput = e => setNight({ Ta: +e.target.value }); $("nt-rh").oninput = e => setNight({ RH: +e.target.value });
+$("nt-cloud").oninput = e => setNight({ cloud: +e.target.value / 100 }); $("nt-wind").oninput = e => setNight({ wind: +e.target.value });
+$("nt-clear").onclick = () => setNight({ ...NIGHT_DEFAULT }); $("nt-over").onclick = () => setNight({ ...NIGHT_DEFAULT, cloud: 1 });
+document.querySelector("#sec-night [data-go]").onclick = () => toggleModel(true, "eq-14");
+
 // ---------------- Courses panel ----------------
 const crs = { aud: "student", kind: "all", hi: null }; let crsOpen = false;
 const GO = {
@@ -819,6 +845,7 @@ const GO = {
   chart: () => { $("sec-now").scrollIntoView({ block: "start", behavior: "smooth" }); flash("sec-now"); },
   front: () => openLens(0), water: () => openLens(2), weather: () => { setFold($("sec-weather"), true); $("sec-weather").scrollIntoView({ block: "start", behavior: "smooth" }); flash("sec-weather"); },
   climate: () => { setFold($("sec-climate"), true); $("sec-climate").scrollIntoView({ block: "start", behavior: "smooth" }); flash("sec-climate"); },
+  night: () => { setFold($("sec-night"), true); $("sec-night").scrollIntoView({ block: "start", behavior: "smooth" }); flash("sec-night"); }, "m-rad": () => toggleModel(true, "eq-14"),
   "m-num": () => toggleModel(true, "m-num"), "m-val": () => toggleModel(true, "m-val"),
 };
 function flash(id) { const el = $(id); el.classList.add("lens-hl"); setTimeout(() => el.classList.remove("lens-hl"), 1800); }
@@ -961,6 +988,26 @@ const EQ = [
       sym: [[String.raw`D_j`, "days of ice cover in winter j", "day", "21–161"], [String.raw`\beta_0`, "intercept", "day", "fitted"], [String.raw`\beta_1`, "trend (slope)", "day/yr", "fitted"], [String.raw`y_j`, "first year of winter j", "yr", `${TREND.first}–${TREND.last}`], [String.raw`\varepsilon_j`, "year-to-year scatter", "day", "residual"], [String.raw`\hat\beta`, "least-squares estimates of the $\\beta$'s", "–", `${TREND.n} winters`]],
       go: ["climate", "Climate change"], refs: [9], live: () => `Now: $\\beta_1$ = ${TREND.b1.toFixed(3)} day/yr (${(TREND.b1 * 100).toFixed(1)} days per century); residual s.d. ${TREND.sd.toFixed(1)} days.` },
   ] },
+  { group: "Radiation on a clear night (surface skin, separate calculator)", courses: [310, 320, 326], items: [
+    { no: 14, name: "Net longwave exchange (Stefan–Boltzmann)", tex: String.raw`q_{\mathrm{rad}} = \varepsilon_s\,\sigma \left(T_s^{4} - \varepsilon_{\mathrm{sky}}\, T_a^{4}\right)`,
+      assumed: "Surface and sky treated as grey; the surface absorbs longwave with the same emissivity it emits. Temperatures in kelvin.",
+      sym: [[String.raw`q_{\mathrm{rad}}`, "net longwave heat leaving the surface", "W/m²", "computed"], [String.raw`\varepsilon_s`, "emissivity of water or ice", "–", "0.96"], [String.raw`\sigma`, "Stefan–Boltzmann constant", "W/(m²·K⁴)", "5.670 × 10⁻⁸"],
+            [String.raw`T_s`, "surface temperature", "K", "solved"], [String.raw`\varepsilon_{\mathrm{sky}}`, "effective sky emissivity", "–", "eq. (16)"], [String.raw`T_a`, "air temperature near the surface", "K", "268–283"]],
+      go: ["night", "Clear night: radiation"], refs: [17, 18], live: () => { const r = nightBalance(NIGHT); return `Now: a 0 °C surface radiates ${r.qRad.toFixed(1)} W/m² more than it absorbs from the sky.`; } },
+    { no: 15, name: "Clear-sky emissivity (Brutsaert)", tex: String.raw`\varepsilon_{\mathrm{clr}} = 1.24 \left(\dfrac{e_a}{T_a}\right)^{1/7}, \qquad e_a = \dfrac{\mathrm{RH}}{100}\; 6.112\, \exp\!\left(\dfrac{17.67\, \theta_a}{\theta_a + 243.5}\right)`,
+      assumed: "$e_a$ in hPa and $T_a$ in K inside the power law; $\\theta_a$ is the air temperature in °C. Coefficients as reported in later literature for Brutsaert's formula.",
+      sym: [[String.raw`\varepsilon_{\mathrm{clr}}`, "clear-sky effective emissivity", "–", "0.6–0.8"], [String.raw`e_a`, "water-vapour pressure of the air", "hPa", "computed"], [String.raw`\mathrm{RH}`, "relative humidity", "%", "30–100"], [String.raw`\theta_a`, "air temperature", "°C", "−5 to +10"]],
+      go: ["night", "Clear night: radiation"], refs: [19, 20], live: () => { const r = nightBalance(NIGHT); return `Now: $e_a$ = ${r.ea.toFixed(2)} hPa → $\\varepsilon_{\\mathrm{clr}}$ = ${r.eClear.toFixed(3)}.`; } },
+    { no: 16, name: "Cloud correction and effective sky temperature", tex: String.raw`\varepsilon_{\mathrm{sky}} = c + (1 - c)\,\varepsilon_{\mathrm{clr}}, \qquad T_{\mathrm{sky}} = \varepsilon_{\mathrm{sky}}^{1/4}\, T_a`,
+      assumed: "Overcast ($c = 1$) makes the sky a black body at the air temperature; the cloud fraction is set by hand.",
+      sym: [[String.raw`c`, "cloud fraction", "–", "0 (clear) to 1 (overcast)"], [String.raw`T_{\mathrm{sky}}`, "temperature of a black body emitting like the sky", "K", "computed"]],
+      go: ["night", "Clear night: radiation"], refs: [21], live: () => { const r = nightBalance(NIGHT); return `Now: $c$ = ${NIGHT.cloud.toFixed(1)} → $\\varepsilon_{\\mathrm{sky}}$ = ${r.eSky.toFixed(3)}, $T_{\\mathrm{sky}}$ = ${sgn(r.Tsky)} °C.`; } },
+    { no: 17, name: "Surface balance: does a 0 °C surface keep losing heat?", tex: String.raw`\begin{aligned} q_{\mathrm{net}}(T_s) &= \varepsilon_s \sigma \left(T_s^{4} - \varepsilon_{\mathrm{sky}} T_a^{4}\right) - h_a\,(T_a - T_s) \\ \text{freezes if } q_{\mathrm{net}}(T_f) &> 0, \qquad \Delta h = \dfrac{q_{\mathrm{net}}(T_f)\, \Delta t}{\rho L} \end{aligned}`,
+      assumed: "Skin ice on calm water already at 0 °C: no heat from the water below, and evaporation, condensation and frost deposition are left out. The skin temperature solves $q_{\\mathrm{net}}(T_s) = 0$; the warmest freezing air temperature solves $q_{\\mathrm{net}}(T_f) = 0$. Illustrative, not a forecast.",
+      check: () => { const r = nightBalance(NIGHT_DEFAULT), T0 = 273.15, Ta = 276.15; return `Hand check (+3 °C, 70 %, clear, 1 m/s): $e_a = 0.70 \\times 7.58 = 5.31$ hPa; $\\varepsilon_{\\mathrm{clr}} = 1.24\\,(5.31/276.15)^{1/7} = ${r.eClear.toFixed(3)}$; $\\sigma T_a^4 = ${(RAD.sigma * Ta ** 4).toFixed(1)}$ and $\\sigma T_f^4 = ${(RAD.sigma * T0 ** 4).toFixed(1)}$ W/m²; $q_{\\mathrm{rad}} = 0.96\\,(${(RAD.sigma * T0 ** 4).toFixed(1)} - ${r.eSky.toFixed(3)} \\times ${(RAD.sigma * Ta ** 4).toFixed(1)}) = ${r.qRad.toFixed(1)}$ W/m²; $h_a = 9.5$, gain $9.5 \\times 3 = ${r.qConv.toFixed(1)}$ W/m²; net ${r.qNet.toFixed(1)} W/m² → $\\Delta h = ${r.qNet.toFixed(1)} \\times 43\\,200/(916.2 \\times 334\\,000) = ${r.growth.toFixed(1)}$ mm in 12 h.`; },
+      sym: [[String.raw`q_{\mathrm{net}}`, "net heat leaving the surface", "W/m²", "computed"], [String.raw`h_a`, "air-film coefficient, eq. (5)", "W/(m²·K)", "5.7–28"], [String.raw`T_f`, "freezing point", "K", "273.15"], [String.raw`\Delta h`, "skin ice formed", "m", "computed"], [String.raw`\Delta t`, "length of the night", "s", "43 200 (12 h)"]],
+      go: ["night", "Clear night: radiation"], refs: [17, 18, 6], live: () => { const r = nightBalance(NIGHT); return `Now: $q_{\\mathrm{net}}(T_f)$ = ${r.qNet.toFixed(1)} W/m² (${r.freezes ? `freezes, ${r.growth.toFixed(1)} mm in 12 h` : "no ice"}); skin ${sgn(r.Tskin)} °C; warmest freezing air ${sgn(r.TaMax)} °C.`; } },
+  ] },
 ];
 const EQ_BY_NO = Object.fromEntries(EQ.flatMap(g => g.items).map(e => [e.no, e]));
 const PARAMS = [
@@ -973,6 +1020,9 @@ const PARAMS = [
   ["$T_a,\\ d_s$", "daily mean air temperature and snow depth, Madison", "1948–2026", "°C, cm", ref(10)],
   ["ice-on, ice-off", "Lake Mendota freeze and thaw dates", "1855–2026", "date", ref(9)],
   ["thresholds", "4, 5, 7, 9, 11, 13, 16, 20 in of new clear ice", "", "in", ref(11)],
+  ["$\\sigma$", "Stefan–Boltzmann constant (14)", "5.670 374 419 × 10⁻⁸", "W/m²K⁴", ref(18)], ["$\\varepsilon_s$", "emissivity of water and ice (14)", "0.96", "–", `water 0.95–0.963, smooth ice 0.966${ref(17)}`],
+  ["$1.24,\\ 1/7$", "clear-sky emissivity coefficients (15)", "", "", ref(19)], ["$6.112,\\ 17.67,\\ 243.5$", "saturation vapour pressure coefficients (15)", "", "hPa, –, °C", ref(20)],
+  ["$\\theta_a,\\ \\mathrm{RH},\\ c,\\ V$", "night air temperature, humidity, cloud fraction, wind (14)–(17)", "+3 °C, 70 %, 0, 1 m/s", "", "illustrative defaults; adjustable"],
 ];
 function renderModel() {
   const V = VALID;
@@ -985,6 +1035,7 @@ function renderModel() {
         <div class="mdl-h"><span class="mdl-n">(${e.no})</span><span class="mdl-name">${e.name}${ref(...e.refs)}</span><button class="btn mdl-go" type="button" data-go="${e.go[0]}" title="${e.go[1]}">Show in the twin ▸</button></div>
         <div class="mdl-tex" data-tex="${encodeURIComponent(e.tex)}"></div>
         ${e.assumed ? `<p class="mdl-assumed"><span class="mdl-src">Assumed</span>${e.assumed}</p>` : ""}
+        ${e.check ? `<p class="mdl-assumed"><span class="mdl-src">Hand check</span>${e.check()}</p>` : ""}
         <div class="mdl-scroll"><table class="mdl-tab"><thead><tr><th>Symbol</th><th>Meaning</th><th>Units</th><th>Value or range</th></tr></thead><tbody>${e.sym.map(x => `<tr><td><span class="mdl-sym" data-inline="1" data-tex="${encodeURIComponent(x[0])}"></span></td><td>${x[1]}</td><td>${x[2]}</td><td>${x[3]}</td></tr>`).join("")}</tbody></table></div>
         ${e.live ? `<p class="mdl-live" data-live="${e.no}"></p>` : ""}
       </div>`).join("")}`; }).join("")}
@@ -1005,7 +1056,8 @@ function renderModel() {
       <li>One-dimensional and uniform across the lake: real ice varies near shores, inlets, springs and pressure ridges. Safety must always be checked on site${ref(12)}.</li>
       <li>All ice is clear (black) ice. Snow-ice ("white ice") that forms when snow loads push water up through cracks is not modeled; it is weaker${ref(11)}.</li>
       <li>Snow is a thin, heat-capacity-free resistance with fixed conductivity; its depth on the lake is a fixed share of the airport snow depth. This is the least certain input.</li>
-      <li>Daily mean air temperature drives the surface; sunlight, longwave radiation and rain are not modeled separately. Melting in spring is therefore only approximate.</li>
+      <li>Daily mean air temperature drives the surface; sunlight, longwave radiation and rain are not modeled separately in the season model. Melting in spring is therefore only approximate.</li>
+      <li>Radiation (14)–(17) is a separate night-time calculator ("Clear night: radiation" in the side panel), not part of the season model, so the season results and freeze-up dates are unchanged. It describes skin ice on calm water that is already at 0 °C: it ignores heat from the water below, evaporation and frost deposition, and the warmest freezing air temperature depends strongly on the wind. It does not mean the lake can freeze over at +3 °C; a whole lake must first cool to about 4 °C and then to 0 °C at the surface.</li>
       <li>The water under the ice is at the freezing point at the interface and supplies no heat ($q_w = 0$ by default).</li>
       <li>Warming scenarios add the same $\\Delta T$ to every day of a real winter and keep its snow; freeze-up follows rule (12). They are sensitivity tests, not climate forecasts.</li>
     </ul>
@@ -1079,6 +1131,7 @@ export const PS_SETUPS = {
   "355-1": { mode: "real", winter: "2025-26", dT: 0, day: 61, pause: true, panel: "sec-climate" },
   "355-2": { mode: "real", winter: "2025-26", dT: 0, day: 61, pause: true, panel: "sec-climate" },
   "450-3": { mode: "real", winter: "2020-21", dT: 0, snowFrac: 0.10, day: 92, pause: true, panel: "sec-weather" },
+  "326-3": { mode: "real", winter: "2013-14", dT: 0, day: 61, pause: true, panel: "sec-night", night: { Ta: 3, RH: 70, cloud: 0, wind: 1 } },
   "355-3": { mode: "real", winter: "2013-14", dT: 0, day: 119, pause: true, panel: "sec-weather", fit: true },
   "450-1": { mode: "real", winter: "2013-14", dT: 0, day: 61, pause: true },
   "450-2": { mode: "real", winter: "2013-14", dT: 2, day: 61, pause: true },
@@ -1091,6 +1144,7 @@ function applySetup() {
   S.fitPts = !!P.fit; S.mode = P.mode; if (P.winter) S.winter = P.winter; S.dT = P.dT ?? 0; S.wind = P.wind ?? DEFAULTS.wind; S.snowFrac = P.snowFrac ?? DEFAULTS.snowFrac;
   if (P.Ta !== undefined) S.Ta = P.Ta; if (P.snowCm !== undefined) S.snowCm = P.snowCm;
   syncControls(); recompute(true); S.day = P.day; if (P.pause) { playing = false; $("play").textContent = "Play"; }
+  if (P.night) setNight(P.night);
   if (P.panel) setFold($(P.panel), true); if (P.view) goTo(P.view, true); if (P.face) setFace(P.face === "real");
   try { localStorage.setItem("ice-intro-seen", "1"); } catch (e) {}
   refreshAll(); return true;
@@ -1103,7 +1157,7 @@ new ResizeObserver(resize).observe(stage);
 new ResizeObserver(() => redrawCharts()).observe(document.querySelector("aside"));
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redrawCharts);
 
-syncControls(); recompute(false); { const iw = S.run && firstDayAtLeast(S.run.h, 4 * IN); if (iw !== null && iw !== undefined) { S.day = iw; refreshAll(); } } goTo("lake", true); resize();   // open on the first walkable day: the anglers are out
+renderNight(); syncControls(); recompute(false); { const iw = S.run && firstDayAtLeast(S.run.h, 4 * IN); if (iw !== null && iw !== undefined) { S.day = iw; refreshAll(); } } goTo("lake", true); resize();   // open on the first walkable day: the anglers are out
 const hadSetup = applySetup();
 window.addEventListener("hashchange", applySetup);
 { let seen = false; try { seen = localStorage.getItem("ice-intro-seen") === "1"; } catch (e) {} if (!seen && !hadSetup) openIntro(); }
