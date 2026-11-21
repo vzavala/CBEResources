@@ -161,6 +161,7 @@ details p, details ul { margin: 8px 0; max-width: 65ch; }
 #detail .co.on b { background: var(--panel); color: var(--accent); box-shadow: 0 0 0 3px var(--accent-fill); }
 #detail .co.on span { background: var(--accent-fill); color: var(--accent-ink); }
 #detail .co span { background: rgba(255, 255, 255, 0.92); border: 1px solid var(--rule); padding: 2px 6px; border-radius: 4px; }
+#detail .co.mini span { display: none; }
 #detail .hint { position: absolute; left: 12px; bottom: 10px; color: var(--ink-2); font: 400 11.5px var(--font-body); }
 @media (min-width: 861px) { body.touring #detail { right: 384px; } }
 @media (max-width: 860px) {
@@ -540,6 +541,59 @@ aside { overflow-anchor: none; }
 #lens-card[hidden], .lens.rw[hidden] { display: none !important; }
 @media (max-width: 860px) { #lens-card, .lens.rw { margin: 8px; } }
 .lc-plain { background: var(--panel-2); }
+
+/* ---------- Part AA: a larger 3D stage (tighter bars; camera views and weather on the stage; narrower side panel) ---------- */
+header { padding-block: 6px; }
+.lenses { padding-block: 4px; }
+main { grid-template-columns: minmax(0, 1fr) 316px; }
+footer { gap: 6px; padding-block: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
+.transport { gap: 8px; }
+.stage-ctl { position: absolute; right: 12px; bottom: 12px; z-index: 4; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; pointer-events: none; max-width: calc(100% - 24px); }
+.stage-ctl > * { pointer-events: auto; }
+.stage-ctl .views { margin-left: 0; }
+.stage-ctl .seg { background: rgba(247, 248, 249, 0.9); box-shadow: 0 1px 6px rgba(15, 23, 42, .22); }
+.stage-ctl #status { font: 500 12px var(--font-data); color: #1c232a; background: rgba(247, 248, 249, 0.85); padding: 3px 8px; border-radius: 6px; pointer-events: none; }
+.stage-ctl #status:empty { display: none; }
+.lens.bi { bottom: 84px; max-height: calc(100% - 96px); }
+@media (max-width: 860px) {
+  header { gap: 6px 12px; padding-block: 8px; }
+  .hgroup { flex-wrap: nowrap; overflow-x: auto; width: 100%; scrollbar-width: thin; padding-bottom: 2px; }
+  .hgroup > * { flex-shrink: 0; }
+  #stage { height: 66vh; }
+  .stage-ctl { right: 8px; bottom: 8px; left: 8px; max-width: none; }
+  .stage-ctl .seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .stage-ctl .seg button { padding: 6px 8px; }
+}
+
+/* ---------- Part AB: short on-stage boxes (long text lives in the side panel) ---------- */
+.lbl { white-space: normal; max-width: 170px; line-height: 1.25; }
+.lbl b { display: block; margin-right: 0; }
+.lbl .ls { display: block; font-size: 10.5px; color: #4a5560; }
+.lens.bi { width: 280px; max-height: 260px; }
+.lens.bi .bi-more { justify-self: start; }
+#biDock, aside .tour { position: static; width: auto; max-height: none; overflow: visible; margin: 10px; padding: 14px 16px; background: #fff; border: 2px solid var(--accent); border-radius: 10px; box-shadow: 0 4px 16px rgba(15, 23, 42, .10); z-index: auto; pointer-events: auto; display: grid; gap: 8px; }
+#biDock[hidden], aside .tour[hidden] { display: none !important; }
+.tour-chip { position: absolute; right: 12px; top: 12px; z-index: 6; display: flex; align-items: center; gap: 6px; max-width: min(380px, calc(100% - 24px)); background: rgba(255, 255, 255, 0.95); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 8px; padding: 4px 6px; box-shadow: 0 2px 10px rgba(15, 23, 42, .18); }
+.tour-chip[hidden] { display: none; }
+.tour-chip #tcText { flex: 1; min-width: 0; font: 600 12.5px var(--font-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#legend { max-width: 240px; }
+/* the cutaway viewer now has the whole stage (the tour text is in the side panel) and sits above the campus overlays; the tour chip stays on top */
+@media (min-width: 861px) { body.touring #detail { right: 0; } }
+#detail { z-index: 7; }
+.tour-chip { z-index: 8; }
+#biDock dl { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } #biDock dd { text-align: right; }
+@media (max-width: 860px) {
+  body.touring #detail .dbar { top: 52px; }
+  /* phones: the camera buttons take the stage bottom, so the legend and the building card sit above them; the spots table sits below the view tag; while touring the chip replaces the view tag */
+  #legend { bottom: 80px; }
+  .spot-tab { top: 64px; max-height: calc(100% - 150px); }
+  .lens.bi { left: 58px; bottom: 80px; max-height: calc(100% - 150px); }
+  body.touring #viewTag { display: none; }
+  #biDock, aside .tour { margin: 8px; }
+  .lens.bi { left: 58px; right: 8px; width: auto; max-height: 200px; }
+  .tour-chip { left: 8px; right: 8px; top: 8px; max-width: none; }
+  .lbl { max-width: 140px; }
+}
 </style>
 
 <header>
@@ -565,6 +619,18 @@ aside { overflow-anchor: none; }
     <div id="spots" aria-label="ChemE spots"></div>
     <div id="spotTab" class="spot-tab" aria-label="ChemE spots"><button class="st-tog" id="stTog" type="button" aria-expanded="true" title="Show or hide the spot titles">‹</button><ol id="stList"></ol></div>
     <div class="overlay" id="viewTag">Campus · buildings from the official campus map</div>
+    <div class="stage-ctl">
+      <span id="status"></span>
+      <div class="views">
+        <div class="seg" role="group" aria-label="Camera view" id="views">
+          <button data-view="campus" aria-pressed="true">Campus</button>
+          <button data-view="lake" aria-pressed="false">Lakeshore</button>
+          <button data-view="plants" aria-pressed="false">Plants</button>
+          <button data-view="west" aria-pressed="false">West campus</button>
+          <button data-view="overhead" aria-pressed="false">Overhead</button>
+        </div>
+      </div>
+    </div>
     <div class="overlay" id="alarm" hidden></div>
     <div id="detail" hidden>
       <canvas></canvas>
@@ -576,7 +642,7 @@ aside { overflow-anchor: none; }
       <div class="lh"><span id="biType"></span><button class="tbtn" id="biClose">Close</button></div>
       <h3 id="biName"></h3>
       <dl id="biRows"></dl>
-      <p class="note" id="biNote"></p>
+      <button class="tbtn bi-more" id="biMore" type="button">More details</button>
     </div>
         <div id="guide" hidden role="dialog" aria-label="User guide">
       <div class="crs-top"><h3>User guide</h3><button class="lc-x" id="guideClose" aria-label="Close user guide">×</button></div>
@@ -610,28 +676,7 @@ aside { overflow-anchor: none; }
       <p class="crs-one">One process, many courses: this digital twin shows how balances, thermodynamics, mixtures, transport, mass transfer, kinetics, materials, control and design work together in a real system.</p>
       <div id="crsBody"></div>
     </div>
-        <div class="overlay tour" id="tour" hidden>
-      <div class="thead"><span id="tStep">Stop 1 of 13</span><button class="tbtn" id="tClose" aria-label="Close tour">Close</button></div>
-      <h3 id="tTitle"></h3>
-      <div class="where" id="tWhere"></div>
-      <p id="tPlain"></p>
-      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="tbtn primary" id="tModel">Open detailed 3D model</button><button class="tbtn" id="tAuto" aria-pressed="false">Auto-advance</button></div>
-      <h4>Live from the model</h4>
-      <dl class="live" id="tLive"></dl>
-      <div><button class="tbtn" id="tTech" aria-pressed="false">Show the technical details</button></div>
-      <div id="tTechBox" hidden style="display:grid;gap:8px">
-      <h4>In more detail</h4>
-      <p id="tRole"></p>
-      <h4>Equations at work</h4>
-      <div class="eqs" id="tThermo"></div>
-      <h4>Specification</h4>
-      <div class="legend-src"><span class="src c">Case data</span> CBE 450 case-study data or public facts · <span class="src t">Typical</span> literature or industry value · <span class="src a">Assumed</span> modelling assumption in this model</div>
-      <dl id="tSpecs"></dl>
-      </div>
-      <h4 id="tPartsH" hidden>Parts</h4>
-      <ol id="tParts" hidden style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.5"></ol>
-      <div class="tnav"><button class="tbtn" id="tPrev">◀ Prev</button><div class="dots" id="tDots"></div><button class="tbtn" id="tNext">Next ▶</button></div>
-    </div>
+    <div class="tour-chip" id="tourChip" hidden role="group" aria-label="Energy tour stop"><button class="tbtn" id="tcPrev" aria-label="Previous stop">◀</button><span id="tcText"></span><button class="tbtn" id="tcNext" aria-label="Next stop">▶</button><button class="tbtn" id="tcClose" aria-label="Close tour">×</button></div>
     <div class="overlay" id="legend" hidden>
       <b id="legT">Heating demand intensity</b>
       <canvas id="cbar" width="256" height="12"></canvas>
@@ -652,6 +697,12 @@ aside { overflow-anchor: none; }
       <p>They design plants, heat exchangers, storage, batteries and capture solvents, and model cost against carbon.</p>
       <p class="college">Click a numbered spot to explore.</p>
     </section>
+    <section class="lens dock" id="biDock" hidden aria-label="Building details">
+      <div class="lc-top"><span class="lc-subject" id="bdType"></span><button class="lc-x" id="bdClose" aria-label="Close">×</button></div>
+      <h3 id="bdName"></h3>
+      <dl id="bdRows"></dl>
+      <p class="note" id="biNote"></p>
+    </section>
     <section id="lens-card" class="dock" hidden aria-label="Subject lens" aria-live="polite">
       <div class="lc-top"><span class="lc-subject" id="lCrs"></span><span class="lc-step" id="lStep"></span><button class="lc-x" id="lClose" aria-label="Close">×</button></div>
       <h3 id="lTitle"></h3>
@@ -663,6 +714,28 @@ aside { overflow-anchor: none; }
       <p class="lc-why" id="lWhy"></p>
       <p class="lc-course" id="lCol"></p>
       <div class="lc-nav"><button class="btn" id="lPrev">Back</button><button class="btn primary" id="lNext">Next</button></div>
+    </section>
+    <section class="tour dock" id="tour" hidden aria-label="Energy tour" aria-live="polite">
+      <div class="thead"><span id="tStep">Stop 1 of 13</span><button class="tbtn" id="tClose" aria-label="Close tour">Close</button></div>
+      <h3 id="tTitle"></h3>
+      <div class="where" id="tWhere"></div>
+      <p id="tPlain"></p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="tbtn primary" id="tModel">Open detailed 3D model</button><button class="tbtn" id="tAuto" aria-pressed="false">Auto-advance</button></div>
+      <h4>Live from the model</h4>
+      <dl class="live" id="tLive"></dl>
+      <div><button class="tbtn" id="tTech" aria-pressed="false">Show the technical details</button></div>
+      <div id="tTechBox" hidden style="display:grid;gap:8px">
+      <h4>In more detail</h4>
+      <p id="tRole"></p>
+      <h4>Equations at work</h4>
+      <div class="eqs" id="tThermo"></div>
+      <h4>Specification</h4>
+      <div class="legend-src"><span class="src c">Case data</span> CBE 450 case-study data or public facts · <span class="src t">Typical</span> literature or industry value · <span class="src a">Assumed</span> modelling assumption in this model</div>
+      <dl id="tSpecs"></dl>
+      </div>
+      <h4 id="tPartsH" hidden>Parts</h4>
+      <ol id="tParts" hidden style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.5"></ol>
+      <div class="tnav"><button class="tbtn" id="tPrev">◀ Prev</button><div class="dots" id="tDots"></div><button class="tbtn" id="tNext">Next ▶</button></div>
     </section>
     <section>
       <h2>Scenario</h2>
@@ -830,9 +903,9 @@ aside { overflow-anchor: none; }
 <footer>
   <div class="trend-strip" id="trendStrip">
     <div class="ts-cell"><div class="ts-head"><span class="label">This week's heat supply</span><span class="hint">MW · 7 days · line = now</span><div class="leg" id="wkLeg"></div></div>
-      <div class="chart" id="wkWrap"><canvas id="cWk" height="118"></canvas><div class="tip" hidden></div></div></div>
+      <div class="chart" id="wkWrap"><canvas id="cWk" height="100"></canvas><div class="tip" hidden></div></div></div>
     <div class="ts-cell"><div class="ts-head"><span class="label">Power per person, by season</span><span class="hint">kW · average day · line = this hour</span><div class="leg" id="ppLeg"></div></div>
-      <div class="chart" id="ppWrap"><canvas id="cPp" height="118"></canvas><div class="tip" hidden></div></div></div>
+      <div class="chart" id="ppWrap"><canvas id="cPp" height="100"></canvas><div class="tip" hidden></div></div></div>
   </div>
   <div class="transport">
     <button class="btn primary" id="play">Pause</button>
@@ -848,16 +921,6 @@ aside { overflow-anchor: none; }
     <button class="btn" id="jCold">Coldest hour</button><button class="btn" id="jHot">Hottest hour</button>
     <div class="seg" id="seasonSeg" role="group" aria-label="Jump to a season"><button data-d="19" aria-pressed="false">Winter</button><button data-d="109" aria-pressed="false">Spring</button><button data-d="200" aria-pressed="false">Summer</button><button data-d="292" aria-pressed="false">Fall</button></div>
     <div class="seg" id="dnSeg" role="group" aria-label="Day or night"><button data-h="12" aria-pressed="false">Day</button><button data-h="22" aria-pressed="false">Night</button></div>
-    <span id="status"></span>
-    <div class="views">
-      <div class="seg" role="group" aria-label="Camera view" id="views">
-        <button data-view="campus" aria-pressed="true">Campus</button>
-        <button data-view="lake" aria-pressed="false">Lakeshore</button>
-        <button data-view="plants" aria-pressed="false">Plants</button>
-        <button data-view="west" aria-pressed="false">West campus</button>
-        <button data-view="overhead" aria-pressed="false">Overhead</button>
-      </div>
-    </div>
   </div>
   <p class="copy">© Victor M. Zavala, Department of Chemical and Biological Engineering, UW–Madison, 2026</p>
 </footer>
@@ -1127,12 +1190,26 @@ function paintBuildings() {
 
 // ---------- labels ----------
 const lblEls = W.labels.map(L => { const e = document.createElement("div"); e.className = "lbl" + (L.key ? "" : " plain"); $("labels").append(e); return e; });
+// on-stage labels stay short (the full names are in the cards and the side panel); "Assumed" tags are kept
+const LBL_SHORT = { "Wisconsin Institutes for Medical Research": "Medical research (WIMR)", "Charter Street Heating and Cooling Plant": "Charter St plant", "Walnut Street Heating and Cooling Plant": "Walnut St plant", "West Campus Cogeneration Facility": "West Campus cogeneration" };
+const SUB_SHORT = { "UW Health, not in campus totals": "not in campus totals", "stylised: backup oil tanks, gas metering": "stylised", "Assumption": "Assumed", "Assumption: new plant": "Assumed", "Assumption: under the recreation fields": "Assumed", "Assumption: amine absorber + stripper": "Assumed: amine", "Assumption: green H₂": "Assumed: green H₂", "Assumption: 10 MW class": "Assumed: 10 MW", "approximate, along streets": "approximate" };
+const lblOrder = W.labels.map((L, i) => i).sort((a, b) => !!W.labels[b].key - !!W.labels[a].key);
 function drawLabels() {
-  const r = stage.getBoundingClientRect(), P = new THREE.Vector3(), show = !(tour.viewer && tour.viewer.open);
+  const r = stage.getBoundingClientRect(), P = new THREE.Vector3(), show = !(tour.viewer && tour.viewer.open), on = [];
   W.labels.forEach((L, i) => { const e = lblEls[i]; if (!show || (!showLabels && !(tour.on)) || L.hide || (L.hideUnlessNet && !W.netGroup.visible)) { e.style.display = "none"; return; }
     P.copy(L.p).project(camera); const d = camera.position.distanceTo(L.p);
     if (P.z > 1 || Math.abs(P.x) > 1.1 || Math.abs(P.y) > 1.1 || d > (L.key ? 9000 : 6000)) { e.style.display = "none"; return; }
-    e.style.display = ""; e.innerHTML = `<b>${L.name}</b>${L.sub || ""}`; e.style.transform = `translate(-50%, -100%) translate(${(P.x * 0.5 + 0.5) * r.width}px, ${(-P.y * 0.5 + 0.5) * r.height}px)`; });
+    const sub = L.sub ? (SUB_SHORT[L.sub] ?? L.sub) : "", h = `<b>${LBL_SHORT[L.name] || L.name}</b>${sub ? `<span class="ls">${sub}</span>` : ""}`;
+    if (e._h !== h) { e._h = h; e.innerHTML = h; }
+    e.style.display = ""; e.style.transform = `translate(-50%, -100%) translate(${(P.x * 0.5 + 0.5) * r.width}px, ${(-P.y * 0.5 + 0.5) * r.height}px)`; on.push(i); });
+  if (!on.length) return;
+  // no label may sit on a spot, the spots table, a chip or card, or another label: lower-priority labels give way
+  const keep = [], pad = 2, add = el => { if (!el || el.hidden || el.style.display === "none") return; const q = el.getBoundingClientRect(); if (q.width) keep.push(q); };
+  spotEls.forEach(add); for (const id of ["spotTab", "viewTag", "tourChip", "legend", "bInfo", "alarm"]) add($(id)); add(document.querySelector(".stage-ctl"));
+  const hit = q => keep.some(k => q.left < k.right + pad && k.left < q.right + pad && q.top < k.bottom + pad && k.top < q.bottom + pad);
+  for (const i of lblOrder) { if (!on.includes(i)) continue; const e = lblEls[i], q = e.getBoundingClientRect();
+    const out = q.left < r.left || q.right > r.right || q.top < r.top;
+    if (out || hit(q)) e.style.visibility = "hidden"; else { e.style.visibility = ""; keep.push(q); } }
 }
 
 // ---------- camera views ----------
@@ -1175,7 +1252,7 @@ const SRC = { T: ["t", "Typical"], C: ["c", "Case data"], A: ["a", "Assumed"] };
 function tourGo(i) {
   tour.i = (i + TOUR_STOPS.length) % TOUR_STOPS.length; tour.autoT = 0;
   const s = TOUR_STOPS[tour.i];
-  $("tStep").textContent = `Stop ${tour.i + 1} of ${TOUR_STOPS.length}`;
+  $("tStep").textContent = `Stop ${tour.i + 1} of ${TOUR_STOPS.length}`; $("tcText").textContent = `${tour.i + 1}/${TOUR_STOPS.length} · ${s.title}`; $("tcText").title = s.title;
   $("tTitle").textContent = s.title; $("tWhere").textContent = s.where; $("tRole").innerHTML = brief(s.role, 2); $("tPlain").innerHTML = brief(s.plain || "", 1);
   $("tSpecs").innerHTML = s.specs.map(([a, b, src]) => `<dt>${a}<span class="src ${SRC[src][0]}">${SRC[src][1]}</span></dt><dd>${b}</dd>`).join("");
   $("tDots").querySelectorAll("button").forEach((b, j) => b.setAttribute("aria-current", String(j === tour.i)));
@@ -1191,9 +1268,10 @@ function tourLive() {
   $("tLive").innerHTML = s.live(S).rows.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("");
   $("tThermo").innerHTML = (s.thermo?.(S) || []).map(e => `<div class="eqi"><div>${e.courses.map(courseTag).join("")}</div><div class="eqm">${TX(e.html)}</div><div class="eqn">${e.note}</div></div>`).join("");
 }
-function tourOffset() { const r = stage.getBoundingClientRect(), tab = typeof stOpen === "function" && stOpen() && r.width > 860 ? -110 : 0; const off = (tour.on && r.width > 900 ? 192 : 0) + tab; if (off) camera.setViewOffset(r.width, r.height, off, 0, r.width, r.height); else camera.clearViewOffset(); }
+function tourOffset() { const r = stage.getBoundingClientRect(), tab = typeof stOpen === "function" && stOpen() && r.width > 860 ? -110 : 0; const off = tab; if (off) camera.setViewOffset(r.width, r.height, off, 0, r.width, r.height); else camera.clearViewOffset(); }
 function setTour(on) {
-  tour.on = on; $("tTour").setAttribute("aria-pressed", String(on)); $("tour").hidden = !on; document.body.classList.toggle("touring", on);
+  tour.on = on; $("tTour").setAttribute("aria-pressed", String(on)); $("tour").hidden = !on; $("tourChip").hidden = !on; document.body.classList.toggle("touring", on);
+  if (on) dockShow($("tour"));
   tourOffset(); if (on) tourGo(tour.i); else { closeModel(); setView("campus"); }
 }
 function openModel() {
@@ -1504,14 +1582,23 @@ let spotLay = "";
 function drawSpots() {
   const r = stage.getBoundingClientRect(), P = new THREE.Vector3(), hide = tour.viewer && tour.viewer.open, phone = r.width < 700, placed = [], lines = [];
   const leftEdge = $("spotTab").getBoundingClientRect().right - r.left + 6;   // spots stay clear of the spots table, open or collapsed
-  SPOTS.forEach((sp, i) => { const el = spotEls[i]; if (hide || (sp.show && !sp.show())) { el.style.display = "none"; return; }
+  const cr = document.querySelector(".stage-ctl").getBoundingClientRect(), ctl = { l: cr.left - r.left - 8, t: cr.top - r.top - 8, r: cr.right - r.left + 8 };   // and of the camera-view buttons
+  const vt = $("viewTag").getBoundingClientRect(), vtR = vt.width ? vt.right - r.left + 6 : -1e9, vtB = vt.width ? vt.bottom - r.top + 22 : 14;   // markers are centred on (x, y): keep half a marker clear
+  const tcE = $("tourChip"), tc = tcE && !tcE.hidden ? tcE.getBoundingClientRect() : null;
+  const hits = (x, y, lw) => placed.find(q => x - 18 < q.x + 18 + q.lw && x + 18 + lw > q.x - 18 && Math.abs(y - q.y) < 34);
+  const order = SPOTS.map((_, i) => i).sort((a, b) => spotEls[b].classList.contains("on") - spotEls[a].classList.contains("on"));
+  order.forEach(i => { const sp = SPOTS[i], el = spotEls[i], active = el.classList.contains("on"); if (hide || (sp.show && !sp.show())) { el.style.display = "none"; return; }
     P.copy(sp.p).project(camera);
     const ax = (P.x * 0.5 + 0.5) * r.width, ay = (-P.y * 0.5 + 0.5) * r.height;
     if (!Number.isFinite(ax) || !Number.isFinite(ay) || P.z > 1 || ax < -10 || ax > r.width + 10 || ay < 0 || ay > r.height + 10) { el.style.display = "none"; return; }
     const lw = phone ? 0 : 8 + 6.2 * sp.lab.length;      // label width estimate
     let x = Math.min(Math.max(ax, leftEdge + 12), r.width - 34 - lw), y = ay - 30;   // keep dot and label inside the stage
-    for (let tries = 0; tries < 12; tries++) { const hit = placed.find(q => x - 18 < q.x + 18 + q.lw && x + 18 + lw > q.x - 18 && Math.abs(y - q.y) < 34); if (!hit) break; y = hit.y - 36; }
-    y = Math.max(14, y);
+    for (let tries = 0; tries < 12; tries++) { const hit = hits(x, y, lw); if (!hit) break; y = hit.y - 36; }
+    if (cr.width && x + 18 + lw > ctl.l && x - 18 < ctl.r && y + 26 > ctl.t) y = ctl.t - 26;
+    let minY = x - 18 < vtR ? Math.max(14, vtB) : 14;
+    if (tc && x + 18 + lw > tc.left - r.left - 6) minY = Math.max(minY, tc.bottom - r.top + 22);
+    y = Math.max(minY, y);
+    if (!active && hits(x, y, lw)) { el.style.display = "none"; return; }   // still colliding: only the active spot keeps its place
     placed.push({ x, y, lw }); el.style.display = ""; el.style.left = `${x}px`; el.style.top = `${y}px`;
     lines.push(`<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${x.toFixed(1)}" y2="${(y + 11).toFixed(1)}"/><circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="2.5"/>`); });
   const svg = lines.join(""); if (svg !== spotLay) { spotLay = svg; spotSvg.innerHTML = svg; }
@@ -1546,13 +1633,22 @@ function showBuilding(i) {
   $("biName").textContent = b.name; $("biType").textContent = TYPE_NAME[b.type] || b.type;
   const rows = [["Footprint", `${f0(b.area)} m²`], ["Floors", `${b.lv} (${b.lvSrc})`], ["Floor area", `${f0(st.m2)} m² (${f0(b.gsf)} ft²)`], ["Typical energy intensity", `${f0(st.euiK)} kWh per m² a year`], ["Estimated energy use", `${f0(st.est)} MWh a year`]];
   if (b.campus) rows.push(["Share of campus energy", `${f2(b.share * 100)} %`], ["Its share of campus heat", `${f0(st.heat)} MWh a year`], ["…cooling", `${f0(st.cool)} MWh a year`], ["…electricity", `${f0(st.elec)} MWh a year`], ["Heat it needs right now", `${f2(st.nowHeat)} MW`]);
-  $("biRows").innerHTML = rows.map(([a, v]) => `<dt>${a}</dt><dd>${v}</dd>`).join("");
+  // on the stage: name plus three key numbers; every row and the sources go to the side panel
+  const key = [["Floor area", `${f0(st.m2)} m²`], ["Energy use", `${f0(st.est)} MWh/yr`], b.campus ? ["Heat now", `${f2(st.nowHeat)} MW`] : ["Campus totals", "not included"]];
+  $("biRows").innerHTML = key.map(([a, v]) => `<dt>${a}</dt><dd>${v}</dd>`).join("");
+  $("bdRows").innerHTML = rows.map(([a, v]) => `<dt>${a}</dt><dd>${v}</dd>`).join(""); $("bdName").textContent = b.name; $("bdType").textContent = TYPE_NAME[b.type] || b.type; $("biDock").hidden = false;
   $("biNote").innerHTML = (b.nonUW ? "Not owned by the university, so it is left out of the campus totals. Footprint from the official campus map." :
     b.type === "plant" ? "A utility plant: it supplies energy rather than using it, so it is left out of the building demand." :
     "Footprint from the official campus map; floors from OpenStreetMap or estimated by type. Energy intensity is the Midwest average for this type of building (EIA CBECS 2018), with labs at 4× an office (labs average 4–6×). The campus columns scale every building so the total matches the case-study demand.") + cite(1, 2, 3, 15, 18);
   const v = { pos: V3(b.c[0] + 160, b.top + 140, b.c[1] + 220), tgt: V3(b.c[0], b.top * 0.6, b.c[1]) }; tween = { t: 0, p0: camera.position.clone(), t0: controls.target.clone(), p1: v.pos, t1: v.tgt };
 }
-$("biClose").onclick = () => { $("bInfo").hidden = true; };
+$("biClose").onclick = () => { $("bInfo").hidden = true; $("biDock").hidden = true; };
+$("tcPrev").onclick = () => $("tPrev").click(); $("tcNext").onclick = () => $("tNext").click(); $("tcClose").onclick = () => $("tClose").click();
+$("bdClose").onclick = () => { $("biDock").hidden = true; $("bInfo").hidden = true; };
+$("biMore").onclick = () => dockShow($("biDock"), true);
+// bring a docked card into view in the side panel (desktop: scroll the panel; phones: scroll the page only when asked)
+function dockShow(el, force = false) { const a = document.querySelector("aside"); if (!el || !a) return;
+  if (innerWidth > 860) a.scrollTop += el.getBoundingClientRect().top - a.getBoundingClientRect().top - 34; else if (force) el.scrollIntoView({ block: "start" }); }
 { const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let down = null;
   renderer.domElement.addEventListener("pointerdown", e => { down = [e.clientX, e.clientY]; });
   renderer.domElement.addEventListener("pointerup", e => { if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return; const r = renderer.domElement.getBoundingClientRect();

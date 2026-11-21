@@ -707,7 +707,7 @@ export class DetailViewer {
       else dir[ax] = dd[ax] * (ax === "y" ? 1.6 : 0.8);
       return { o, home: o.position.clone(), dir, oc }; });
     this.partKid = m.parts.map(([, p]) => { let best = null, bd = 1e9; for (const k of this.kids) { const dd = k.oc.distanceTo(p); if (dd < bd) { bd = dd; best = k; } } return best; });
-    this.callouts.innerHTML = m.parts.map(([n], i) => `<button class="co" data-i="${i}"><b>${i + 1}</b><span>${n}</span></button>`).join("");
+    this.callouts.innerHTML = m.parts.map(([n], i) => `<button class="co" data-i="${i}" title="${n}"><b>${i + 1}</b><span>${n}</span></button>`).join("");
     this.coEls = [...this.callouts.children];
     this.coEls.forEach(el => el.onclick = () => this.focus(+el.dataset.i));
     this.focusT = null; this.open = true; this.resize();
@@ -739,5 +739,18 @@ export class DetailViewer {
       const vis = P.z < 1 && Math.abs(P.x) < 1.05 && Math.abs(P.y) < 1.05;
       el.style.display = vis ? "" : "none"; if (vis) el.style.transform = `translate(${(P.x * 0.5 + 0.5) * w}px, ${(-P.y * 0.5 + 0.5) * h}px)`;
     });
+    // declutter: the active part first; a label that would cover another label, the top bar or the tour chip shrinks to its
+    // number (the name stays in the side panel's parts list and as a tooltip), and a number that still collides is hidden
+    const keep = [], pad = 2;
+    for (const sel of [".dbar", ".hint"]) { const q = this.host.querySelector(sel); if (q) keep.push(q.getBoundingClientRect()); }
+    const chip = document.getElementById("tourChip"); if (chip && !chip.hidden) keep.push(chip.getBoundingClientRect());
+    const hit = q => keep.some(k => q.left < k.right + pad && k.left < q.right + pad && q.top < k.bottom + pad && k.top < q.bottom + pad);
+    const order = this.coEls.map((_, i) => i).sort((a, b) => this.coEls[b].classList.contains("on") - this.coEls[a].classList.contains("on"));
+    for (const i of order) { const el = this.coEls[i]; if (el.style.display === "none") continue;
+      el.classList.remove("mini"); el.style.visibility = "";
+      let q = el.getBoundingClientRect(); if (!hit(q)) { keep.push(q); continue; }
+      el.classList.add("mini"); q = el.getBoundingClientRect();
+      if (!hit(q) || el.classList.contains("on")) { keep.push(q); continue; }
+      el.style.visibility = "hidden"; }
   }
 }
