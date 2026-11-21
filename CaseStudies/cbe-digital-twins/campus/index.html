@@ -586,7 +586,7 @@ aside { overflow-anchor: none; }
         <h4>How to explore</h4>
         <ul><li>Opens on the <b>Campus</b> overview with the numbered ChemE spots.</li><li><b>Click a spot</b> (or its row on the left) to zoom in and open its card.</li><li><b>Drag</b> to orbit, <b>scroll</b> or pinch to zoom.</li><li>Camera buttons, bottom right: <b>Campus</b> (overview), <b>Lakeshore</b>, <b>Plants</b>, <b>West campus</b>, <b>Overhead</b>.</li></ul>
         <h4>Buttons</h4>
-        <ul><li><b>Energy tour</b>: 13 guided stops through plants, pipes and buildings.</li><li><b>Networks</b>: shows the steam and chilled-water pipes, with flow.</li><li><b>Heat map</b>: colours buildings by this hour's heating or cooling demand.</li><li><b>Day/night lighting</b>: sun, sky and lights follow the clock; off holds midday light.</li><li><b>Real world</b>: what this system is and why it matters.</li><li><b>Conditions</b>: live readings on the plants and landmarks.</li><li>Subject chips (<b>Balances</b>, <b>Thermo</b>, …): a short lesson per course.</li><li><b>Winter · Spring · Summer · Fall</b> and <b>Day · Night</b>: jump in time. <b>Play</b> and the speed buttons run the clock.</li></ul>
+        <ul><li><b>Energy tour</b>: 13 guided stops through plants, pipes and buildings.</li><li><b>Networks</b>: shows the steam and chilled-water pipes, with flow.</li><li><b>Heat map</b>: colours buildings by this hour's heating or cooling demand.</li><li><b>Day/night lighting</b>: sun, sky and lights follow the clock; at night the scene dims to soft moonlight (never dark) and windows and street lights come on; off holds midday light.</li><li><b>Real world</b>: what this system is and why it matters.</li><li><b>Conditions</b>: live readings on the plants and landmarks.</li><li>Subject chips (<b>Balances</b>, <b>Thermo</b>, …): a short lesson per course.</li><li><b>Winter · Spring · Summer · Fall</b> and <b>Day · Night</b>: jump in time. <b>Play</b> and the speed buttons run the clock.</li></ul>
         <h4>Change conditions</h4>
         <ul><li>Pick a <b>Pathway</b> in the side panel, or move the levers under Electricity, Heating, Cooling and Economics.</li><li>Watch annual CO₂, cost, and the "What this means" boxes.</li></ul>
         <h4>Equations, courses, problems</h4>
@@ -913,7 +913,7 @@ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadow
 stage.prepend(renderer.domElement);
 const scene = new THREE.Scene();
 const HAZE = new THREE.Color("#c9d3d9");
-scene.fog = new THREE.Fog(HAZE.clone(), 7000, 26000);
+scene.fog = new THREE.Fog(HAZE.clone(), 6000, 17000);   // the ground ends ~7 km out: haze hides its edge
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 const skyU = { top: { value: new THREE.Color("#5f8fc4") }, mid: { value: new THREE.Color("#b6c9d8") }, bot: { value: HAZE.clone() } };
@@ -923,19 +923,22 @@ scene.add(new THREE.Mesh(new THREE.SphereGeometry(30000, 32, 16), new THREE.Shad
 // Physical sky (Preetham) driven by the sun position; the environment light is rebuilt from it with PMREM.
 const sky = new Sky(); sky.scale.setScalar(28000); scene.add(sky);
 // keep the sun disk finite in the half-float buffers (the stock shader reaches ~1e5 there, which bloom would smear)
-sky.material.fragmentShader = sky.material.fragmentShader.replace("gl_FragColor = vec4( retColor, 1.0 );", "retColor = clamp(retColor, vec3(0.0), vec3(24.0)); gl_FragColor = vec4( retColor, 1.0 );");
+sky.material.fragmentShader = sky.material.fragmentShader.replace("uniform vec3 up;", "uniform vec3 up;\nuniform vec3 uDusk; uniform float uDuskK;").replace("gl_FragColor = vec4( retColor, 1.0 );", "retColor = clamp(retColor, vec3(0.0), vec3(24.0)); retColor = mix(retColor, uDusk * mix(1.0, 0.75, smoothstep(0.0, 0.6, direction.y)), uDuskK); gl_FragColor = vec4( retColor, 1.0 );");
+sky.material.uniforms.uDusk = { value: new THREE.Color("#3a5684") }; sky.material.uniforms.uDuskK = { value: 0 };
 const envSky = new Sky(); envSky.scale.setScalar(50); envSky.material.uniforms = sky.material.uniforms; envSky.material.fragmentShader = sky.material.fragmentShader; const envScene = new THREE.Scene(); envScene.add(envSky);
 Object.assign(sky.material.uniforms, { turbidity: { value: 4 }, rayleigh: { value: 1.2 }, mieCoefficient: { value: 0.004 }, mieDirectionalG: { value: 0.8 } });
-let envRT = null, envT = -1, envDir = new THREE.Vector3();
+let envRT = null, envT = -1, envK = -1, envDir = new THREE.Vector3();
 function updateEnv(now, force) {
-  if (!force && (now - envT < 400 || envDir.distanceToSquared(sky.material.uniforms.sunPosition.value) < 1e-4)) return;
-  envT = now; envDir.copy(sky.material.uniforms.sunPosition.value);
+  const dk = sky.material.uniforms.uDuskK.value;
+  if (!force && (now - envT < 400 || (envDir.distanceToSquared(sky.material.uniforms.sunPosition.value) < 1e-4 && Math.abs(dk - envK) < 0.02))) return;
+  envT = now; envDir.copy(sky.material.uniforms.sunPosition.value); envK = dk;
   const rt = pmrem.fromScene(envScene, 0, 0.1, 100); if (envRT) envRT.dispose(); envRT = rt; scene.environment = rt.texture;
 }
 const camera = new THREE.PerspectiveCamera(38, 1, 4, 40000);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.48; controls.maxDistance = 12000; controls.minDistance = 30;
 const hemi = new THREE.HemisphereLight("#eef3f7", "#55604a", 0.7); scene.add(hemi);
+const HEMI_DAY = [new THREE.Color("#eef3f7"), new THREE.Color("#55604a")], HEMI_NIGHT = [new THREE.Color("#a9bde0"), new THREE.Color("#4a5566")];
 const sun = new THREE.DirectionalLight("#fff3e2", 2.4);
 sun.castShadow = true; sun.shadow.mapSize.set(PHONE ? 1024 : 4096, PHONE ? 1024 : 4096); sun.shadow.radius = 3; sun.shadow.bias = -0.0005; sun.shadow.normalBias = 1.5;
 Object.assign(sun.shadow.camera, { left: -2600, right: 2600, top: 2600, bottom: -2600, near: 10, far: 9000 });
@@ -1037,14 +1040,17 @@ function lightTargets() {
   const d = Math.floor(hour / 24) % 365, follow = dayNight && !REDUCED, hod = follow ? hour % 24 : 12.5, hAbs = d * 24 + hod;
   const s = M.sunPos(d, hod), g = ghiAt(hAbs), se = Math.max(0.01, Math.sin(s.el));
   const day01 = Math.min(1, Math.max(0, (s.elDeg + 4) / 14)), cloud = Math.min(1, Math.max(0, 1 - g / Math.max(1, 1098 * se * Math.exp(-0.057 / Math.max(0.05, se)) * 0.85)));
-  LT.dir.set(-Math.cos(s.el) * Math.sin(s.az), Math.sin(s.el), Math.cos(s.el) * Math.cos(s.az));
-  LT.sun = s.el > 0 ? 3.4 * Math.min(1, g / 500 + 0.3) * Math.min(1, s.elDeg / 3) : 0;
-  const warm = Math.max(0, 1 - s.elDeg / 18); LT.sunC.setRGB(1, 0.93 - 0.25 * warm, 0.85 - 0.45 * warm);
-  LT.hemi = 0.1 + 0.22 * day01;
-  const night = 1 - day01, clear = new THREE.Color("#4f86c6"), over = new THREE.Color("#8c969e"), dusk = new THREE.Color("#e8a26a"), nite = new THREE.Color("#0b1424");
+  LT.dir.set(-Math.cos(s.el) * Math.sin(s.az), Math.sin(s.el), Math.cos(s.el) * Math.cos(s.az)); (LT.sunDir ||= new THREE.Vector3()).copy(LT.dir);
+  // night factor: 0 with the sun above 6°, 1 below −6°; at night the scene dims to a moonlit dusk (never full darkness)
+  const nf = Math.min(1, Math.max(0, (6 - s.elDeg) / 12)); LT.nf = nf * nf * (3 - 2 * nf);
+  const sunI = s.el > 0 ? 3.4 * Math.min(1, g / 500 + 0.3) * Math.min(1, s.elDeg / 3) : 0, moonI = 0.9 * Math.min(1, Math.max(0, -s.elDeg / 6));
+  LT.sun = Math.max(sunI, moonI); if (sunI < moonI) LT.dir.set(-0.35, 0.78, 0.52).normalize();   // soft key light from a high moon
+  const warm = Math.max(0, 1 - s.elDeg / 18); LT.sunC.setRGB(1, 0.93 - 0.25 * warm, 0.85 - 0.45 * warm); if (sunI < moonI) LT.sunC.set("#c3d2f2");
+  LT.hemi = 0.32 + 0.68 * LT.nf;
+  const night = 1 - day01, clear = new THREE.Color("#4f86c6"), over = new THREE.Color("#8c969e"), dusk = new THREE.Color("#e8a26a"), nite = new THREE.Color("#2c4268");
   tmpC.copy(clear).lerp(over, cloud * 0.8); if (warm > 0 && s.el > 0) tmpC.lerp(dusk, warm * 0.35); tmpC.lerp(nite, night);
   LT.top.copy(tmpC); LT.mid.copy(tmpC).lerp(new THREE.Color("#dfe6ea"), 0.5 * day01).lerp(nite, night * 0.8); LT.bot.copy(LT.mid).lerp(new THREE.Color("#b9c3c8"), 0.3);
-  LT.exp = 0.32 + 0.5 * day01; LT.elDeg = s.elDeg; LT.cloud = cloud;
+  LT.exp = 0.82 - 0.07 * LT.nf; LT.elDeg = s.elDeg; LT.cloud = cloud;
   LT.haze = (LT.haze || new THREE.Color()).setRGB(0.74, 0.8, 0.87).lerp(new THREE.Color("#a9b0b5"), cloud * 0.7).lerp(new THREE.Color("#e9b88a"), warm * 0.3 * day01).lerp(nite, night);
   applySeason(d);
 }
@@ -1054,11 +1060,12 @@ function easeLighting(dt) {
   const k = lightInit ? Math.min(1, dt * 1.5) : 1; lightInit = true;
   curDir.lerp(LT.dir, k).normalize(); sun.position.copy(curDir).multiplyScalar(4000).add(controls.target); sun.target.position.copy(controls.target);
   sun.intensity += (LT.sun - sun.intensity) * k; sun.castShadow = sun.intensity > 0.05; sun.color.lerp(LT.sunC, k);
-  hemi.intensity += (LT.hemi - hemi.intensity) * k;
+  hemi.intensity += (LT.hemi - hemi.intensity) * k; LT.nfC = (LT.nfC ?? LT.nf) + (LT.nf - (LT.nfC ?? LT.nf)) * k;
+  hemi.color.copy(HEMI_DAY[0]).lerp(HEMI_NIGHT[0], LT.nfC); hemi.groundColor.copy(HEMI_DAY[1]).lerp(HEMI_NIGHT[1], LT.nfC);
   skyU.top.value.lerp(LT.top, k); skyU.mid.value.lerp(LT.mid, k); skyU.bot.value.lerp(LT.bot, k);
   scene.fog.color.copy(skyU.bot.value);
-  const su = sky.material.uniforms; su.sunPosition.value.copy(curDir); su.turbidity.value = 3 + 7 * LT.cloud; su.rayleigh.value = 1.2 + 1.5 * (1 - LT.cloud) * Math.max(0, 1 - LT.elDeg / 25);
-  sky.visible = LT.elDeg > -4; W.lampMat.emissiveIntensity = 6 * Math.min(1, Math.max(0, (2 - LT.elDeg) / 6)); FX.uNight.value += ((1 - Math.min(1, Math.max(0, (LT.elDeg + 3) / 9))) - FX.uNight.value) * k;
+  const su = sky.material.uniforms; su.sunPosition.value.lerp(LT.sunDir, k).normalize(); su.turbidity.value = 3 + 7 * LT.cloud; su.rayleigh.value = 1.2 + 1.5 * (1 - LT.cloud) * Math.max(0, 1 - LT.elDeg / 25);
+  su.uDuskK.value = LT.nfC; sky.visible = true; W.lampMat.emissiveIntensity = 6 * Math.min(1, Math.max(0, (2 - LT.elDeg) / 6)); FX.uNight.value += ((1 - Math.min(1, Math.max(0, (LT.elDeg + 3) / 9))) - FX.uNight.value) * k;
   if (sky.visible) scene.fog.color.lerp(LT.haze, 0.6);
   { const d = camera.position.distanceTo(controls.target), half = Math.min(2600, Math.max(320, d * 1.3)), sc = sun.shadow.camera;
     if (Math.abs(sc.right - half) / half > 0.15) { Object.assign(sc, { left: -half, right: half, top: half, bottom: -half }); sc.updateProjectionMatrix(); } }
@@ -1500,7 +1507,7 @@ function drawSpots() {
   SPOTS.forEach((sp, i) => { const el = spotEls[i]; if (hide || (sp.show && !sp.show())) { el.style.display = "none"; return; }
     P.copy(sp.p).project(camera);
     const ax = (P.x * 0.5 + 0.5) * r.width, ay = (-P.y * 0.5 + 0.5) * r.height;
-    if (P.z > 1 || ax < -10 || ax > r.width + 10 || ay < 0 || ay > r.height + 10) { el.style.display = "none"; return; }
+    if (!Number.isFinite(ax) || !Number.isFinite(ay) || P.z > 1 || ax < -10 || ax > r.width + 10 || ay < 0 || ay > r.height + 10) { el.style.display = "none"; return; }
     const lw = phone ? 0 : 8 + 6.2 * sp.lab.length;      // label width estimate
     let x = Math.min(Math.max(ax, leftEdge + 12), r.width - 34 - lw), y = ay - 30;   // keep dot and label inside the stage
     for (let tries = 0; tries < 12; tries++) { const hit = placed.find(q => x - 18 < q.x + 18 + q.lw && x + 18 + lw > q.x - 18 && Math.abs(y - q.y) < 34); if (!hit) break; y = hit.y - 36; }

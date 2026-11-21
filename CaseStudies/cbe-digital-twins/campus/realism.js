@@ -77,10 +77,10 @@ diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.8, 0.83, 0.88), vRoof * uSnow * 
   float det = dot(sX, R1) * faceDirection; vec3 grad = sign(det) * (dH.x * R1 + dH.y * R2);
   vec3 nn = abs(det) * normal - grad; if (abs(det) > 1e-12 && dot(nn, nn) > 1e-20) normal = normalize(nn); }`)
       .replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>
-float lit = step(0.58, fh(cid * 1.37 + sd * 91.0));
-totalEmissiveRadiance += win * mix(lit, 0.35, far) * uNight * vec3(1.0, 0.74, 0.42) * 3.2;`);
+float lit = step(0.68, fh(cid * 1.37 + sd * 91.0));   // about a third of the windows lit, warm and soft (accents, not floodlight)
+totalEmissiveRadiance += win * mix(lit, 0.16, far) * uNight * vec3(1.0, 0.72, 0.4) * 1.7;`);
   };
-  m.customProgramCacheKey = () => "facade-v4";
+  m.customProgramCacheKey = () => "facade-v5";
   return m;
 }
 

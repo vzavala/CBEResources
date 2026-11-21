@@ -36,8 +36,13 @@ export function isLand(x, z) { const k = MASK.n / MASK.size, i = Math.floor((x -
 // terrain: the Bascom Hill drumlin and Observatory Hill as smooth bumps (stylised relief, not surveyed)
 export function hgt(x, z) {
   if (!isLand(x, z)) return -4;
-  return 2 + 24 * Math.exp(-(((x + 60) / 240) ** 2) - ((z + 10) / 170) ** 2) + 16 * Math.exp(-(((x + 380) / 210) ** 2) - ((z + 120) / 140) ** 2) + 3 * Math.sin(x / 520) * Math.cos(z / 410);
+  return Math.max(0.8, 2 + 24 * Math.exp(-(((x + 60) / 240) ** 2) - ((z + 10) / 170) ** 2) + 16 * Math.exp(-(((x + 380) / 210) ** 2) - ((z + 120) / 140) ** 2) + 3 * Math.sin(x / 520) * Math.cos(z / 410));
 }
+
+// smooth 2D value noise in [0, 1] (hash-based, so the seeded random sequence used elsewhere is unchanged)
+function vnoise(x, z) { const h = (i, j) => { const v = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return v - Math.floor(v); };
+  const i = Math.floor(x), j = Math.floor(z), fx = x - i, fz = z - j, sx = fx * fx * (3 - 2 * fx), sz = fz * fz * (3 - 2 * fz);
+  return (h(i, j) * (1 - sx) + h(i + 1, j) * sx) * (1 - sz) + (h(i, j + 1) * (1 - sx) + h(i + 1, j + 1) * sx) * sz; }
 
 // ---------- extrusion of footprint polygons into one merged mesh ----------
 function extrudeInto(acc, ring, y0, h, wall, roof, seed = Math.random()) {
@@ -47,9 +52,10 @@ function extrudeInto(acc, ring, y0, h, wall, roof, seed = Math.random()) {
   const y1 = y0 + h, P = acc.p, N = acc.n, C = acc.c, F = acc.f; let run = 0;
   for (let i = 0; i < pts.length; i++) {
     const [x0, z0] = pts[i], [x1, z1] = pts[(i + 1) % pts.length], dx = x1 - x0, dz = z1 - z0, L = Math.hypot(dx, dz) || 1, nx = dz / L, nz = -dx / L;
-    const q = [[x0, y0, z0], [x1, y0, z1], [x1, y1, z1], [x0, y0, z0], [x1, y1, z1], [x0, y1, z0]];
-    const fu = [[run, 0], [run + L, 0], [run + L, h], [run, 0], [run + L, h], [run, h]];
-    q.forEach((v, k) => { P.push(...v); N.push(-nx, 0, -nz); C.push(wall.r, wall.g, wall.b); F.push(fu[k][0], fu[k][1], seed); });
+    // outward-facing walls (normal and winding agree, so back-face culling keeps the side towards the camera)
+    const q = [[x0, y0, z0], [x1, y1, z1], [x1, y0, z1], [x0, y0, z0], [x0, y1, z0], [x1, y1, z1]];
+    const fu = [[run, 0], [run + L, h], [run + L, 0], [run, 0], [run, h], [run + L, h]];
+    q.forEach((v, k) => { P.push(...v); N.push(nx, 0, nz); C.push(wall.r, wall.g, wall.b); F.push(fu[k][0], fu[k][1], seed); });
     run += L;
   }
   const tri = THREE.ShapeUtils.triangulateShape(pts.map(([x, z]) => new THREE.Vector2(x, z)), []);
@@ -69,7 +75,8 @@ export function buildWorld(scene) {
   W.groundBase = new Float32Array(p.count * 3);
   for (let i = 0; i < p.count; i++) {
     const x = p.getX(i) - 400, z = p.getZ(i) - 200, y = hgt(x, z); p.setXYZ(i, x, y, z);
-    const c = isLand(x, z) ? new THREE.Color().setHSL(0.25 + 0.035 * Math.sin(x / 90) * Math.cos(z / 70), 0.42, 0.16 + 0.025 * Math.sin(x / 47 + z / 53)) : new THREE.Color("#5d6a5e");
+    // patchy grass from smooth value noise (pure sine waves read as regular stripes at a distance)
+    const c = isLand(x, z) ? new THREE.Color().setHSL(0.25 + 0.035 * (2 * vnoise(x / 260, z / 260) - 1), 0.42, 0.16 + 0.025 * (2 * (0.65 * vnoise(x / 420 + 7, z / 420) + 0.35 * vnoise(x / 130, z / 130 + 3)) - 1)) : new THREE.Color("#5d6a5e");
     col.set([c.r, c.g, c.b], i * 3);
   }
   W.groundBase.set(col); g.setAttribute("color", new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
@@ -98,11 +105,13 @@ export function buildWorld(scene) {
   // ---------- university buildings from the official map ----------
   const PAL = { lab: "#a5533f", hospital: "#c2bcb0", residence: "#b8a07a", education: "#c7b493", office: "#d8ccb0", assembly: "#b9a58a", athletic: "#9aa0a6", stadium: "#9b4a3a", food: "#c9a77d", parking: "#8e8f92", greenhouse: "#cfe3d9", storage: "#9a9690", plant: "#8c4b3b" };
   const acc = { p: [], n: [], c: [], f: [] }, cc = new THREE.Color(), roofC = new THREE.Color();
+  // flat campus roofs read as grey membrane or gravel (not a darker copy of the wall); picked by a position hash so the seeded layout is unchanged
+  const ROOFS = ["#9d9b96", "#8b8985", "#aeaba5", "#7f7d79", "#b7b4ad", "#94918b"], rh = (x, z) => { const v = Math.sin(x * 12.9898 + z * 78.233) * 43758.5453; return v - Math.floor(v); };
   const share = (() => { let s = 0; for (const b of DATA.uw) if (!b.nonUW && b.type !== "plant") s += b.gsf * b.eui; return s; })();
   W.B = DATA.uw.map(b => {
     const ring = []; for (const [x, z] of b.r) ring.push([x, z]);
     let ymin = 1e9; for (const [x, z] of ring) ymin = Math.min(ymin, hgt(x, z)); const y0 = Math.max(ymin, 0.5) - 0.5;
-    const start = acc.p.length / 3; cc.set(b.nonUW ? "#bdb6aa" : PAL[b.type] || "#c7b493"); roofC.copy(cc).multiplyScalar(b.type === "stadium" ? 1 : 0.82); if (b.type === "stadium") roofC.set("#3d7a3a");
+    const start = acc.p.length / 3; cc.set(b.nonUW ? "#bdb6aa" : PAL[b.type] || "#c7b493"); roofC.set(b.type === "greenhouse" ? "#dfe9e4" : ROOFS[Math.floor(rh(b.r[0][0], b.r[0][1]) * ROOFS.length)]); if (b.type === "stadium") roofC.set("#3d7a3a");
     extrudeInto(acc, ring, y0, b.h, cc, roofC, R());
     return { ...b, y0, top: y0 + b.h, color: cc.getHex(), roof: roofC.getHex(), v0: start, v1: acc.p.length / 3, campus: !b.nonUW && b.type !== "plant", share: !b.nonUW && b.type !== "plant" ? b.gsf * b.eui / share : 0, intensity: b.eui / 65.8 };
   });
@@ -115,8 +124,9 @@ export function buildWorld(scene) {
 
   // ---------- other buildings (OpenStreetMap), one mesh ----------
   { const a2 = { p: [], n: [], c: [], f: [] }, pal = ["#b9aa98", "#a89c8c", "#c4b8a6", "#9d968c", "#b8a48f", "#8f8a84"], w = new THREE.Color(), r2 = new THREE.Color();
+    const CROOF = ["#6f6c68", "#7c7873", "#5f5d5b", "#8a8580", "#6b625a", "#9a9792"];   // shingle and membrane greys
     for (const rec of DATA.city) { const h = rec[0], ring = []; for (let i = 1; i < rec.length; i += 2) ring.push([rec[i], rec[i + 1]]);
-      const [x, z] = ring[0]; if (!isLand(x, z)) continue; w.set(pal[Math.floor(R() * pal.length)]); r2.copy(w).multiplyScalar(0.8);
+      const [x, z] = ring[0]; if (!isLand(x, z)) continue; w.set(pal[Math.floor(R() * pal.length)]); r2.set(CROOF[Math.floor(rh(x, z) * CROOF.length)]);
       extrudeInto(a2, ring, Math.max(hgt(x, z), 0.5) - 0.5, h, w, r2, R()); }
     W.cityMesh = toMesh(a2, W.uwMesh.material); W.cityMesh.receiveShadow = true; scene.add(W.cityMesh); }
 
