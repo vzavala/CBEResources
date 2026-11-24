@@ -189,6 +189,11 @@ export function makeScene(stage, NBLOB = 6, blobStage = null) {
         // a strand of wax back to where the blob came from, thinning until it pinches off
         const up = q.v >= 0, prog = up ? q.u : 1 - q.u; if (prog > 0.02 && prog < 0.55 && Math.abs(q.v) > 0.002) { const y0 = up ? 0.02 : yTop - 0.01, thin = 1 - prog / 0.55; for (let k = 1; k <= 4; k++) { const f = k / 5, yy = y + (y0 - y) * f, cc = toU(x * (1 - f), yy, z * (1 - f)); gball(cc, Math.min(r * (0.55 - 0.07 * k) * (0.35 + 0.65 * thin), gr(Math.max(0, yy / GH)) - 0.004), bc); } } });
       if (fluid) { bc = th ? tcol((s.Tb + s.Tt) / 2, cA) : WHITE; for (const d of fluid) gball(toU(d[0], d[1], d[2]), d[3], bc); }
+      // keep the wax inside the glass: where blobs gather, their fields add and the surface would swell through the wall and the cap.
+      // The field is faded to zero over two cells just inside the inner wall, and above the cap rim.
+      { const N = mc.size, f = mc.field, w = 2 / N, k = 2 * SC;
+        for (let y = 1; y < N - 1; y++) { const u = ((y / N - 0.5) * k + GH / 2) / GH, top = u > UC ? 0 : 1, rm = Math.max(0, gr(Math.min(1, Math.max(0, u))) - 0.0012) / k, r0 = Math.max(0, rm - w), r02 = r0 * r0;
+          for (let z = 1; z < N - 1; z++) { const dz = z / N - 0.5, zo = z * N * N + y * N; for (let x = 1; x < N - 1; x++) { const id = zo + x; if (f[id] <= 0) continue; if (!top) { f[id] = 0; continue; } const dx = x / N - 0.5, d2 = dx * dx + dz * dz; if (d2 <= r02) continue; const r = Math.sqrt(d2); f[id] *= r >= rm ? 0 : (rm - r) / w; } } } }
       mc.update(); }
     else { const pr = 0.024 + 0.014 * smP.pool; pool.scale.set(pr, 0.012 + 0.018 * smP.pool, pr); pool.position.y = BH + 0.008 + pool.scale.y * 0.6;
       const tr = 0.01 + 0.011 * smP.top; topPool.visible = smP.top > 0.02; topPool.scale.set(tr, 0.006 + 0.022 * smP.top, tr); topPool.position.y = BH + GH * 0.945 - topPool.scale.y * 0.7;
