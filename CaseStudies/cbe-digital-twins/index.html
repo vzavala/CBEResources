@@ -49,7 +49,7 @@ h1 { font: 700 clamp(32px, 4vw, 46px)/1.02 var(--font-display); margin: 0; color
 select { font: 600 13px var(--font-display); color: var(--ink); background: var(--plate); border: 1px solid var(--rule); border-radius: 99px; padding: 4px 10px; margin-left: auto; }
 button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 12px; }
-@media (min-width: 1250px) { .grid { grid-template-columns: repeat(7, minmax(0, 1fr)); } }   /* 13 twins: 7 + 6 */
+@media (min-width: 1250px) { .grid { grid-template-columns: repeat(7, minmax(0, 1fr)); } }   /* 14 twins: 7 + 7 */
 .plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; display: grid;
   grid-template-rows: auto 1fr; min-width: 0; transition: box-shadow .15s, transform .15s; }
 .plate:hover { box-shadow: 0 8px 22px rgba(40,39,40,.14); transform: translateY(-2px); }
@@ -254,6 +254,14 @@ const TWINS = [
     desc: "From grain to glass: watch yeast turn sugar into alcohol and bubbles, and run a fermentation yourself.",
     basis: "",
     courses: [560, 430, 250, 255, 310, 311, 320, 326, 426, 450, 470],
+  },
+  {
+    id: "lamp", theme: "products",
+    name: "Lava Lamp",
+    url: "lamp/",
+    desc: "Why wax blobs rise and sink: heat transfer, buoyancy, two liquid phases and coalescence in one lamp you can test at home.",
+    basis: "",
+    courses: [255, 311, 320, 326, 355, 430, 470, 547],
   },
 ];
 
